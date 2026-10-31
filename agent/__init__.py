@@ -176,7 +176,8 @@ class Run:
         facts = self.facts + [describe(r) for r in receipts]
         text, feedback = None, None
         for _ in range(MAX_REWRITES + 1):
-            draft = yurko.draft_reply("\n".join(f"- {f}" for f in facts), feedback)
+            draft = yurko.draft_reply("\n".join(f"- {f}" for f in facts), feedback,
+                                      demo_overclaim=self.inp.trigger == "customer_message")
             verdict = before_reply(draft, receipts, self.inp.now)
             self.verdicts.append(verdict)
             if verdict.decision == "PASS":

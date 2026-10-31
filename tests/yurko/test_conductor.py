@@ -23,7 +23,7 @@ def offline(monkeypatch):
     monkeypatch.setattr(agent, "SETTLE_SECONDS", 0)
     monkeypatch.setattr(agent, "zavuch_rules", None)
     monkeypatch.setattr(agent, "zavuch_claims", None)
-    monkeypatch.setattr(yurko, "draft_reply", lambda facts, feedback=None: f"DRAFT[{feedback or 'first'}]")
+    monkeypatch.setattr(yurko, "draft_reply", lambda facts, feedback=None, **_: f"DRAFT[{feedback or 'first'}]")
 
 
 def inp(**kw) -> AgentInput:

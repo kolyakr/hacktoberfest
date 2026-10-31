@@ -42,10 +42,11 @@ def plan_actions(cls: Classification, customer: Customer, ticket_id: str) -> lis
     return [a for a in plan.actions if getattr(a, needed[a.tool]) and (a.tool != "refund_payment" or a.amount)]
 
 
-def draft_reply(facts: str, feedback: str | None = None) -> str:
+def draft_reply(facts: str, feedback: str | None = None, *, demo_overclaim: bool = False) -> str:
     """The customer-facing text (OPENAI_MODEL) from facts, not guesses. `feedback` is Zavuch's FIX reason.
 
-    DEMO_OVERCLAIM=1 makes the *first* draft overclaim on purpose, so the demo shows Zavuch catching it.
+    DEMO_OVERCLAIM=1 and demo_overclaim=True: the first draft overclaims on purpose (SPEC demo step 1 only),
+    so the audience sees Zavuch catch it.
     """
     user = f"FACTS:\n{facts}"
     if feedback:
@@ -53,6 +54,6 @@ def draft_reply(facts: str, feedback: str | None = None) -> str:
             f"\n\nYour previous draft was rejected by the checker: {feedback}\n"
             "Rewrite it so that every statement matches the FACTS."
         )
-    elif os.getenv("DEMO_OVERCLAIM") == "1":
+    elif demo_overclaim and os.getenv("DEMO_OVERCLAIM") == "1":
         return llm.text(llm.BIG, prompts.OVERCLAIM_SYSTEM, user)
     return llm.text(llm.BIG, prompts.DRAFT_SYSTEM, user)
