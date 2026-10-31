@@ -60,7 +60,7 @@ uv run pytest -q                                           # зелене; тв�
 - Чернетка отримує факти (статуси квитанцій, причини BLOCK), а не здогадки. Після FIX переписує з `verdict.reason`, максимум 2 рази, потім ESCALATE.
 
 **Tasks:**
-- [ ] yurko-1: `agent/llm.py`: `generate_json(model, system, user, schema)` і виклик із тулами; повтор і пауза. Done when: `uv run python -m agent.llm` друкує валідну `Classification` для Marta (live).
+- [x] yurko-1: `agent/llm.py`: `generate_json(model, system, user, schema)` і виклик із тулами; повтор і пауза. Done when: `uv run python -m agent.llm` друкує валідну `Classification` для Marta (live).
 - [ ] yurko-2: `agent/yurko.py: classify()`. Done when: `uv run pytest -m live tests/yurko -k classify` зелене (5 демо-повідомлень).
 - [ ] yurko-3: `agent/__init__.py: run()` для `customer_message` на `TOOLS_IMPL=fake`. Done when: `uv run pytest -m live tests/yurko -k run` зелене.
 - [ ] yurko-4: тригери `receipt_update` і `human_decision`, плюс `DEMO_OVERCLAIM=1`. Done when: `uv run pytest -m live tests/acceptance` зелене (з backend і zavuch).
