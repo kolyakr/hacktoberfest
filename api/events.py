@@ -63,8 +63,9 @@ def output(out: AgentOutput, before: TicketStatus, at: datetime) -> None:
     t = out.ticket_id
     if out.classification:
         c = out.classification
-        append(t, "classified", at, detail={"true_goal": c.true_goal, "sentiment": c.sentiment},
-               intents=",".join(c.intents), chargeback_threat=c.chargeback_threat)
+        # true_goal is in data, not detail: Olya's insight reads it from the event log
+        append(t, "classified", at, detail={"sentiment": c.sentiment}, intents=",".join(c.intents),
+               true_goal=c.true_goal, chargeback_threat=c.chargeback_threat)
     flagged = (out.classification and out.classification.injection_suspected) or any(
         v.rule == "injection" for v in out.verdicts)
     if flagged:
