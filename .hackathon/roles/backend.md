@@ -90,7 +90,7 @@ class BillingSim:
 
 ## Ти власник `contracts/` і `scripts/`
 - Нове поле для фронта: правиш модель у `contracts/*.py`, тестові дані в `scripts/build_fixtures.py`, далі `uv run python scripts/build_fixtures.py && make contracts`.
-- `.env.example` має містити назви (без значень): `OPENAI_API_KEY`, `OPENAI_FAST_MODEL`, `OPENAI_MODEL`, `AGENT_IMPL`, `TOOLS_IMPL`, `DEMO_OVERCLAIM`, `STORE` + наявні назви Supabase. Онови вручну: Claude цей файл не читає.
+- `.env.example` має містити назви (без значень): `OPENAI_API_KEY`, `OPENAI_FAST_MODEL`, `OPENAI_MODEL`, `AGENT_IMPL`, `TOOLS_IMPL`, `DEMO_OVERCLAIM`, `STORE` + для API `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (їх читає `api/mirror.py`) і наявні `VITE_SUPABASE_*`. Онови вручну: Claude цей файл не читає.
 
 ## Здача (deadline 17:00)
 - **README:** що це, як запустити (`make setup`, `make dev`), **AI usage**: продукт — OpenAI (які моделі); розробка — Claude Code. Ліцензія MIT уже є.
@@ -99,8 +99,8 @@ class BillingSim:
 - Слайди (≤ 10): проблема → Юрко / Завуч / Оля → демо-відео → що ловить Завуч → KPI Олі → що далі.
 
 ## Задачі
-- [ ] backend-1: `services/billing.py` → `uv run pytest tests/backend/test_billing.py` зелене.
-- [ ] backend-2: `services/__init__.py` → `uv run pytest tests/backend/test_tools.py` зелене.
+- [x] backend-1: `services/billing.py` → `uv run pytest tests/backend/test_billing.py` зелене.
+- [x] backend-2: `services/__init__.py` → `uv run pytest tests/backend/test_tools.py` зелене.
 - [ ] backend-3: `api/` з фейковим агентом, сховище в пам'яті → `uv run pytest tests/backend/test_api.py` зелене; `make dev` + фронт показує тікет Marta.
 - [ ] backend-3b: сховище Supabase за таблицею вище → у консолі через Realtime з'являється тікет Marta і її дії.
 - [ ] backend-4: справжній агент (`AGENT_IMPL=real`) + фоновий цикл вебхуків → `uv run pytest -m live tests/acceptance` зелене (разом з yurko і zavuch).

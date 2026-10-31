@@ -93,7 +93,7 @@ uv run pytest -q                                           # зелене; тв�
 - Вебхук: перевірка дубля за `event_id` → `apply_webhook` → якщо змінилось, `agent.run(trigger="receipt_update")`.
 
 **Tasks:**
-- [ ] backend-1: `services/billing.py: BillingSim`. Done when: `uv run pytest tests/backend/test_billing.py` зелене.
-- [ ] backend-2: `services/__init__.py: REGISTRY` (5 тулів на одному спільному `BillingSim`). Done when: `uv run pytest tests/backend/test_tools.py` зелене.
+- [x] backend-1: `services/billing.py: BillingSim`. Done when: `uv run pytest tests/backend/test_billing.py` зелене.
+- [x] backend-2: `services/__init__.py: REGISTRY` (5 тулів на одному спільному `BillingSim`). Done when: `uv run pytest tests/backend/test_tools.py` зелене.
 - [ ] backend-3: `api/main.py`: усі 7 ендпоінтів, `AGENT_IMPL=fake`, сховище в пам'яті (`STORE=memory`), фоновий цикл `deliver_due` → `POST /webhooks/billing`. Потім backend-3b: запис у Supabase (мапінг у `roles/backend.md`). Done when: `uv run pytest tests/backend/test_api.py` зелене, і `make dev` + web показує тікет Marta.
 - [ ] backend-4: README › AI usage, `.env.example`, запис демо, ZIP. Done when: ZIP завантажено в папку команди до 16:45.
