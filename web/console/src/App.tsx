@@ -18,6 +18,9 @@ const firstName = (email?: string) => {
 
 export default function App() {
   const [session, setSession] = useState<Session | null | undefined>(supabase ? undefined : null)
+  // "Continue as demo agent": opens the console without an account (for judges and teammates).
+  const [guest, setGuest] = useState(() => { try { return sessionStorage.getItem('guest') === '1' } catch { return false } })
+  const enterGuest = () => { try { sessionStorage.setItem('guest', '1') } catch { /* private mode */ } setGuest(true) }
   useEffect(() => {
     if (!supabase) return
     void supabase.auth.getSession().then(({ data }) => setSession(data.session))
@@ -26,8 +29,8 @@ export default function App() {
   }, [])
 
   if (session === undefined) return <div className="aurora" />
-  if (supabase && !session) return <><div className="aurora" /><Login /></>
-  return <Console agent={firstName(session?.user.email)} />
+  if (supabase && !session && !guest) return <><div className="aurora" /><Login onGuest={enterGuest} /></>
+  return <Console agent={session ? firstName(session.user.email) : 'Demo'} />
 }
 
 function Console({ agent }: { agent: string }) {

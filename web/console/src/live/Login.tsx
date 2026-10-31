@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { supabase } from '../../../src/live'
 
 /** Email + password sign-in. The console user is made in the Supabase dashboard. */
-export function Login() {
+export function Login({ onGuest }: { onGuest: () => void }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -45,6 +45,7 @@ export function Login() {
         </label>
         {error && <p className="login-error" role="alert">{error}</p>}
         <button type="submit" className="btn btn-primary" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
+        <button type="button" className="btn ghost login-guest" onClick={onGuest}>Continue as demo agent</button>
         <small>Accounts are made by your team lead in Supabase.</small>
       </form>
     </main>

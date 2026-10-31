@@ -811,3 +811,7 @@ html { background: var(--bg); }
 .login-card::after { opacity: .12; }
 .login-card h2, .login-card p, .login-card label, .login-card small { text-shadow: 0 1px 10px rgb(0 20 40 / .35); }
 .login-card input { background: rgb(255 255 255 / .1); }
+
+/* Login: "Continue as demo agent", a quiet second option under Sign in. */
+.login-card .login-guest{width:100%;margin-top:-4px;background:rgb(255 255 255/.1);border:1px solid rgb(255 255 255/.35);color:#fff}
+.login-card .login-guest:hover{background:rgb(255 255 255/.2)}

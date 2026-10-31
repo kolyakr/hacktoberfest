@@ -40,7 +40,7 @@ export function Header({ tab, onTab, live, agent }: { tab: Tab; onTab: (tab: Tab
         </button>}
         <span className="avatar" title={agent}>{agent[0]}</span>
         {supabase && (
-          <button type="button" className="btn ghost small" onClick={() => void supabase?.auth.signOut()}>Sign out</button>
+          <button type="button" className="btn ghost small" onClick={() => { try { sessionStorage.removeItem('guest') } catch { /* private mode */ } void (supabase?.auth.signOut() ?? Promise.resolve()).then(() => location.reload()) }}>Sign out</button>
         )}
       </div>
     </header>
