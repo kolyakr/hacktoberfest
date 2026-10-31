@@ -1,0 +1,9 @@
+{
+  "name": "web",
+  "private": true,
+  "workspaces": ["console", "customer"],
+  "scripts": {
+    "dev": "npm run dev -w console & npm run dev -w customer & wait",
+    "build": "npm run build -w console && npm run build -w customer"
+  }
+}
