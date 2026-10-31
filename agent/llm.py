@@ -18,7 +18,7 @@ from functools import cache
 
 from dotenv import load_dotenv
 from openai import OpenAI
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 load_dotenv()  # OPENAI_API_KEY and the model names from .env; existing env vars win
 
@@ -42,6 +42,13 @@ def _messages(system: str, user: str) -> list[dict[str, str]]:
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
 
+def _where(e: ValueError) -> str:
+    """Error type and field paths only: the values would echo customer text into the logs."""
+    if isinstance(e, ValidationError):
+        return f"ValidationError at {sorted({'.'.join(map(str, err['loc'])) for err in e.errors()})}"
+    return type(e).__name__
+
+
 def parse[M: BaseModel](model: str, system: str, user: str, schema: type[M]) -> M:
     """Ask `model` for one `schema` instance. Validated by Pydantic; one retry, then LLMError."""
     last: Exception | None = None
@@ -50,7 +57,7 @@ def parse[M: BaseModel](model: str, system: str, user: str, schema: type[M]) -> 
             r = client().responses.parse(model=model, input=_messages(system, user), text_format=schema)
         except ValueError as e:  # pydantic ValidationError and JSONDecodeError are both ValueErrors
             last = e
-            log.warning("%s: %s attempt %d did not validate: %s", schema.__name__, model, attempt, e)
+            log.warning("%s: %s attempt %d did not validate: %s", schema.__name__, model, attempt, _where(e))
             continue
         if r.output_parsed is not None:
             return r.output_parsed
