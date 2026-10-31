@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<defs><filter id="zavuch-sticker" x="-10%" y="-10%" width="120%" height="120%">
+  <feMorphology in="SourceAlpha" operator="dilate" radius="11" result="edge"/>
+  <feGaussianBlur in="edge" stdDeviation="6" result="blur"/>
+  <feOffset in="blur" dy="5" result="drop"/>
+  <feFlood flood-color="#000" flood-opacity=".22"/><feComposite in2="drop" operator="in" result="shadow"/>
+  <feFlood flood-color="#fff"/><feComposite in2="edge" operator="in" result="white"/>
+  <feMerge><feMergeNode in="shadow"/><feMergeNode in="white"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter></defs>
+<g filter="url(#zavuch-sticker)">
+  <rect x="140" y="330" width="232" height="148" rx="60" fill="#495057" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M212 334 L256 400 L300 334 Z" fill="#fff" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M244 352 L268 352 L262 368 L276 420 L256 438 L236 420 L250 368 Z" fill="#e8590c" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="138" y="96" width="236" height="236" rx="96" fill="#9aa1a8" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M150 128 Q160 92 232 100 Q200 128 178 178 Q150 160 150 128 Z" fill="#6f767c" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M362 128 Q352 92 280 100 Q312 128 334 178 Q362 160 362 128 Z" fill="#6f767c" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M176 250 Q256 222 336 250 Q356 312 312 350 Q256 378 200 350 Q156 312 176 250 Z" fill="#eef0f2" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M256 268 Q232 300 196 296 M256 268 Q280 300 316 296" fill="none" stroke="#adb5bd" stroke-width="4" stroke-linecap="round"/>
+  <path d="M232 322 Q256 314 280 322" fill="none" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="206" cy="208" r="36" fill="#fff" fill-opacity=".35" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="306" cy="208" r="36" fill="#fff" fill-opacity=".35" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M242 206 Q256 196 270 206" fill="none" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="208" cy="214" r="11" fill="#1e1e1e"/><circle cx="304" cy="214" r="11" fill="#1e1e1e"/>
+  <circle cx="212" cy="210" r="3.5" fill="#fff"/><circle cx="308" cy="210" r="3.5" fill="#fff"/>
+  <path d="M190 200 L226 205 M286 205 L322 200" fill="none" stroke="#9aa1a8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M158 168 Q190 140 238 176 Q206 166 170 186 Z" fill="#eef0f2" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M354 168 Q322 140 274 176 Q306 166 342 186 Z" fill="#eef0f2" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M232 246 Q256 236 280 246 Q276 266 256 270 Q236 266 232 246 Z" fill="#1e1e1e"/>
+  <ellipse cx="248" cy="246" rx="7" ry="3.5" fill="#fff" opacity=".7"/>
+  <rect x="300" y="350" width="120" height="132" rx="12" fill="#ffd8a8" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="332" y="338" width="56" height="24" rx="8" fill="#868e96" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M320 392 l12 12 l22 -24 M320 436 l12 12 l22 -24" fill="none" stroke="#2f9e44" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M368 400 h36 M368 444 h36" fill="none" stroke="#e8590c" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="300" cy="420" rx="28" ry="22" fill="#9aa1a8" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <ellipse cx="186" cy="468" rx="34" ry="20" fill="#9aa1a8" stroke="#1e1e1e" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+</g>
+</svg>
