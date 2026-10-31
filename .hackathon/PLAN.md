@@ -76,7 +76,7 @@ uv run pytest -q                                           # зелене; тв�
 - LLM Завуча бачить лише текст чернетки, а не міркування Юрка. Окремий промпт, `OPENAI_FAST_MODEL`.
 
 **Tasks:**
-- [ ] zavuch-1: `agent/zavuch/rules.py: before_action()` + `policy.py`. Done when: `uv run pytest tests/zavuch/test_before_action.py` зелене (18 тестів).
+- [x] zavuch-1: `agent/zavuch/rules.py: before_action()` + `policy.py`. Done when: `uv run pytest tests/zavuch/test_before_action.py` зелене (18 тестів).
 - [ ] zavuch-2: `agent/zavuch/claims.py: judge_claims()`. Done when: `uv run pytest tests/zavuch/test_before_reply.py` зелене (без live).
 - [ ] zavuch-3: `agent/zavuch/receipts.py: apply_webhook()`. Done when: `uv run pytest tests/zavuch/test_after_action.py` зелене.
 - [ ] zavuch-4: `agent/olya/kpis.py: compute()`. Done when: `uv run pytest tests/olya` зелене.

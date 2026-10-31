@@ -83,7 +83,7 @@ agent/olya/report.py           report(events) -> OlyaReport                     
 - `agent/llm.py` пише yurko в перші 20 хв. До того роби код-частини (хуки 1, 2, `judge_claims`, `kpis`), бо вони без LLM.
 
 ## Задачі
-- [ ] zavuch-1: `policy.py` + `rules.py` → `uv run pytest tests/zavuch/test_before_action.py` зелене (18).
+- [x] zavuch-1: `policy.py` + `rules.py` → `uv run pytest tests/zavuch/test_before_action.py` зелене (18).
 - [ ] zavuch-2: `judge_claims` → `uv run pytest tests/zavuch/test_before_reply.py` зелене.
 - [ ] zavuch-3: `apply_webhook` → `uv run pytest tests/zavuch/test_after_action.py` зелене.
 - [ ] zavuch-4: `olya/kpis.py` → `uv run pytest tests/olya` зелене.
