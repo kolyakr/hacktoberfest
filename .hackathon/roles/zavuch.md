@@ -85,6 +85,6 @@ agent/olya/report.py           report(events) -> OlyaReport                     
 ## Задачі
 - [x] zavuch-1: `policy.py` + `rules.py` → `uv run pytest tests/zavuch/test_before_action.py` зелене (18).
 - [ ] zavuch-2: `judge_claims` → `uv run pytest tests/zavuch/test_before_reply.py` зелене.
-- [ ] zavuch-3: `apply_webhook` → `uv run pytest tests/zavuch/test_after_action.py` зелене.
+- [x] zavuch-3: `apply_webhook` → `uv run pytest tests/zavuch/test_after_action.py` зелене.
 - [ ] zavuch-4: `olya/kpis.py` → `uv run pytest tests/olya` зелене.
 - [ ] zavuch-5: `extract_claims` + `olya/report.py` → `uv run pytest -m live tests/zavuch tests/olya` зелене.
