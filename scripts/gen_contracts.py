@@ -5,6 +5,7 @@ import importlib
 import inspect
 import json
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -118,7 +119,9 @@ def main() -> int:
         return 0
     ts = ROOT / "web/src/api/schema.gen.ts"
     ts.parent.mkdir(parents=True, exist_ok=True)
-    r = subprocess.run(["npx", "--yes", OPENAPI_TS, str(out), "-o", str(ts)], capture_output=True, text=True)
+    # shutil.which resolves npx.cmd on Windows; macOS/Linux get the same npx as before
+    npx = shutil.which("npx") or "npx"
+    r = subprocess.run([npx, "--yes", OPENAPI_TS, str(out), "-o", str(ts)], capture_output=True, text=True)
     if r.returncode:
         print(f"contracts: FAIL ({OPENAPI_TS})\n{r.stdout}{r.stderr}", file=sys.stderr)
         return 1
