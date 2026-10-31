@@ -10,7 +10,7 @@ export function Rules() {
   return (
     <main className="rules">
       <div className="rules-main">
-        <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.01em' }}>How much can Yurko do alone?</h1>
+        <h1 className="display">How much can Yurko do <em>alone?</em></h1>
         <p>
           Set a level for every tool. The model only <em>proposes</em>. These rules decide, in code, whether a proposal runs, waits for a
           person, or is blocked.
@@ -56,7 +56,7 @@ export function Rules() {
         </div>
       </div>
       <aside className="guard">
-        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#a3a6ad' }}>
+        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#7fd0f5', fontFamily: 'var(--mono)' }}>
           Hard guardrails · always on
         </div>
         <ul>

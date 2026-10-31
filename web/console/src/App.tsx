@@ -1,17 +1,59 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import type { Session } from '@supabase/supabase-js'
+import { supabase } from '../../src/live'
 import { Header, type Tab } from './components/Header'
 import { Inbox } from './components/Inbox'
-import { Insights } from './components/Insights'
+import { Overview } from './components/Overview'
 import { Rules } from './components/Rules'
+import { Live } from './live/Live'
+import { Login } from './live/Login'
+import { Toasts } from './live/Toasts'
+import { useLive } from './live/useLive'
+
+/** "iryna.k@team.com" -> "Iryna" */
+const firstName = (email?: string) => {
+  const p = (email ?? 'support').split('@')[0].split(/[._-]/)[0]
+  return p[0].toUpperCase() + p.slice(1)
+}
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>('inbox')
+  const [session, setSession] = useState<Session | null | undefined>(supabase ? undefined : null)
+  useEffect(() => {
+    if (!supabase) return
+    void supabase.auth.getSession().then(({ data }) => setSession(data.session))
+    const { data } = supabase.auth.onAuthStateChange((_e, s) => setSession(s))
+    return () => data.subscription.unsubscribe()
+  }, [])
+
+  if (session === undefined) return <div className="aurora" />
+  if (supabase && !session) return <><div className="aurora" /><Login /></>
+  return <Console agent={firstName(session?.user.email)} />
+}
+
+function Console({ agent }: { agent: string }) {
+  const [tab, setTab] = useState<Tab>('overview')
+  const [ticket, setTicket] = useState<string>()
+  const [liveId, setLiveId] = useState<string>()
+  const openLive = (id: string) => {
+    setLiveId(id)
+    setTab('live')
+  }
+  const { handoffs, toasts, dismiss } = useLive(!!supabase, openLive)
+  const open = (id: string) => {
+    setTicket(id)
+    setTab('inbox')
+  }
   return (
     <>
-      <Header tab={tab} onTab={setTab} />
-      {tab === 'inbox' && <Inbox />}
-      {tab === 'insights' && <Insights />}
-      {tab === 'rules' && <Rules />}
+      <div className="aurora" />
+      <Header tab={tab} onTab={setTab} live={handoffs.length} agent={agent} />
+      <div className="page" key={tab}>
+        {tab === 'overview' && <Overview onOpen={open} handoffs={handoffs} onLive={openLive} />}
+        {tab === 'live' && <Live handoffs={handoffs} active={liveId} onPick={setLiveId} agent={agent} />}
+        {tab === 'inbox' && <Inbox initial={ticket} agent={agent} />}
+        {tab === 'rules' && <Rules />}
+      </div>
+      <Toasts toasts={toasts} onOpen={openLive} onDismiss={dismiss} />
     </>
   )
 }

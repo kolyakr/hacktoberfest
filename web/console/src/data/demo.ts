@@ -150,45 +150,48 @@ export const CHANNEL_LABEL: Record<DemoTicket['channel'], string> = {
   email: 'Email',
 }
 
-// Insights (Olya). KPIs come from SQL; the insight text comes from Gemma.
+// Overview (Olya). The four numbers come from GET /api/report; these series are demo
+// data until the API serves them, shaped to add up to the `busy` report (200 tickets, 36 human).
 
-export interface Kpi {
+export interface Day {
+  date: string
   label: string
-  value: string
-  delta: string
-  good: boolean
+  ai: number
+  human: number
 }
 
-export const KPIS: Kpi[] = [
-  { label: 'First response time', value: '41s', delta: '↓ 6h 12m', good: true },
-  { label: 'Resolution time', value: '2m 40s', delta: '↓ 71%', good: true },
-  { label: 'CSAT', value: '4.6 / 5', delta: '↑ 0.4', good: true },
-  { label: 'Refund rate', value: '8.1%', delta: '↓ 1.9 pts', good: true },
-  { label: 'Zavuch blocks', value: '3.2%', delta: '↑ 0.8 pts', good: false },
-  { label: 'Promise kept', value: '99.1%', delta: '↑ 4.3 pts', good: true },
+export const DAILY: Day[] = [
+  { date: '2026-10-25', label: 'Sat', ai: 18, human: 4 },
+  { date: '2026-10-26', label: 'Sun', ai: 15, human: 3 },
+  { date: '2026-10-27', label: 'Mon', ai: 28, human: 6 },
+  { date: '2026-10-28', label: 'Tue', ai: 26, human: 5 },
+  { date: '2026-10-29', label: 'Wed', ai: 24, human: 5 },
+  { date: '2026-10-30', label: 'Thu', ai: 27, human: 6 },
+  { date: '2026-10-31', label: 'Fri', ai: 26, human: 7 },
 ]
 
-export const INTENTS = [
-  { label: 'refund_request', total: 128, auto: 74 },
-  { label: 'cancel_request', total: 63, auto: 58 },
-  { label: 'how_to', total: 52, auto: 50 },
-  { label: 'login_problem', total: 41, auto: 39 },
-  { label: 'pause_request', total: 17, auto: 17 },
-  { label: 'other', total: 11, auto: 3 },
-]
+export interface Country {
+  /** ISO 3166-1 numeric, as in world-atlas. */
+  id: string
+  name: string
+  tickets: number
+  rule: string
+}
 
-export const CAUSES = [
-  { label: 'Trial converted, no reminder', pct: 38 },
-  { label: 'Uninstalled the app, thought it cancelled', pct: 24 },
-  { label: 'Charged twice / unknown charge', pct: 17 },
-  { label: 'Price higher than expected', pct: 13 },
-]
+const EU = 'EU · 14-day refund, Yurko can act'
+const HUMAN = 'Outside EU · a human decides refunds'
 
-export const PROMISES = [
-  { name: 'Yurko', note: 'AI · checked by Zavuch', promised: 214, done: 214 },
-  { name: 'Mykhailo', note: 'human', promised: 35, done: 34 },
-  { name: 'Iryna', note: 'human', promised: 22, done: 22 },
-  { name: 'Nate', note: 'human', promised: 29, done: 26 },
+export const COUNTRIES: Country[] = [
+  { id: '840', name: 'United States', tickets: 78, rule: HUMAN },
+  { id: '276', name: 'Germany', tickets: 41, rule: EU },
+  { id: '826', name: 'United Kingdom', tickets: 19, rule: HUMAN },
+  { id: '250', name: 'France', tickets: 14, rule: EU },
+  { id: '616', name: 'Poland', tickets: 11, rule: EU },
+  { id: '804', name: 'Ukraine', tickets: 9, rule: HUMAN },
+  { id: '724', name: 'Spain', tickets: 8, rule: EU },
+  { id: '380', name: 'Italy', tickets: 7, rule: EU },
+  { id: '124', name: 'Canada', tickets: 7, rule: HUMAN },
+  { id: '528', name: 'Netherlands', tickets: 6, rule: EU },
 ]
 
 export const PRODUCT_TICKET = 'PROD-212'

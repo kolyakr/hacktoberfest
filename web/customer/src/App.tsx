@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { brand } from './brand.ts'
 import { Header } from './components/Header.tsx'
 import { Hero } from './components/Hero.tsx'
@@ -10,6 +10,9 @@ export default function App() {
   // `?mock=<case>` opens the chat straight away, for the demo.
   const [open, setOpen] = useState(new URLSearchParams(window.location.search).has('mock'))
   const openChat = () => setOpen(true)
+  const closeChat = useCallback(() => setOpen(false), [])
+  // Wide screens: the page makes room for the chat panel instead of hiding under it.
+  useEffect(() => { document.documentElement.classList.toggle('chat-open', open) }, [open])
 
   return (
     <>
@@ -35,11 +38,11 @@ export default function App() {
         </footer>
       </main>
 
-      <button className="fab" type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+      <button className={open ? 'fab gone' : 'fab'} type="button" onClick={openChat} aria-expanded={open} aria-controls="chat" tabIndex={open ? -1 : 0}>
         <img src={brand.mascot} alt="" />Need help?
       </button>
 
-      <ChatWidget open={open} />
+      <ChatWidget open={open} onClose={closeChat} />
     </>
   )
 }
