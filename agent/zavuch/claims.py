@@ -8,10 +8,55 @@ bad timing -> FIX false_promise; else PASS.
 """
 
 from datetime import datetime
+from typing import Literal
 
+from pydantic import BaseModel
+
+from agent import llm
 from agent.zavuch import policy
 from contracts.agent import Claim, Verdict
 from contracts.tools import ActionName, ActionReceipt
+
+# Zavuch's own prompt. It sees only the draft text, never Yurko's reasoning, receipts or facts.
+CLAIMS_SYSTEM = """\
+You are Zavuch, an independent checker in a subscription app's support team. You read ONE draft reply
+a support agent wants to send to a customer and list every statement of fact in it about actions and
+money. You do not decide whether the statements are true; you only find them.
+
+Kinds:
+- canceled: the subscription is presented as already cancelled, stopped or not renewing
+  ("is cancelled", "I've cancelled", "you won't be charged again").
+- refunded: the refund is presented as done: issued, processed, completed, returned, "the money is back".
+- refund_submitted: a refund is submitted, requested, initiated or being processed, i.e. not done yet.
+- timing: any statement about WHEN the money arrives. promised_days is the number of days stated
+  ("up to 15 business days" -> 15, "within a week" -> 7, "today" -> 0). If the money is said to be
+  there already, "now" or "immediately", promised_days is null.
+- other: another factual claim about the account (access until a date, the amount charged).
+Skip apologies, instructions, advice and questions.
+
+text: the exact words from the draft, kept short. One sentence can hold several claims
+("cancelled and refunded, the money is already on your card" -> canceled, refunded, timing).
+Return an empty list when the draft states no such facts.
+"""
+
+
+class _Found(BaseModel):
+    """Strict-mode schema: every field required, so Claim's judge-only fields stay out of it."""
+
+    text: str
+    kind: Literal["canceled", "refunded", "refund_submitted", "timing", "other"]
+    promised_days: int | None
+
+
+class _Claims(BaseModel):
+    claims: list[_Found]
+
+
+def extract_claims(draft: str) -> list[Claim]:
+    """Statements of fact in the draft (OPENAI_FAST_MODEL); receipt_id, ok, problem are left to judge_claims."""
+    found = llm.parse(llm.FAST, CLAIMS_SYSTEM, f"DRAFT:\n{draft}", _Claims)
+    return [Claim(text=f.text, kind=f.kind, promised_days=f.promised_days) for f in found.claims]
+
 
 _ACTION_FOR: dict[str, ActionName] = {
     "canceled": "cancel_subscription",

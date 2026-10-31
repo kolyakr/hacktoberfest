@@ -80,7 +80,7 @@ uv run pytest -q                                           # зелене; тв�
 - [x] zavuch-2: `agent/zavuch/claims.py: judge_claims()`. Done when: `uv run pytest tests/zavuch/test_before_reply.py` зелене (без live).
 - [x] zavuch-3: `agent/zavuch/receipts.py: apply_webhook()`. Done when: `uv run pytest tests/zavuch/test_after_action.py` зелене.
 - [x] zavuch-4: `agent/olya/kpis.py: compute()`. Done when: `uv run pytest tests/olya` зелене.
-- [ ] zavuch-5: `extract_claims()` (LLM) і `agent/olya/report.py`. Done when: `uv run pytest -m live tests/zavuch tests/olya` зелене.
+- [x] zavuch-5: `extract_claims()` (LLM) і `agent/olya/report.py`. Done when: `uv run pytest -m live tests/zavuch tests/olya` зелене.
 
 ## Role: backend (хто?)
 **Builds:** імітація білінгу з вебхуками, тули, API, запис тікетів, дій і журналу в Supabase (`tickets`, `actions`, `audit_log`), README і здача.
