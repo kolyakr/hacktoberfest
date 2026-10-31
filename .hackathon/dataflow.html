@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8"><title>Повний датафлоу: Юрко, Завуч, Оля</title>
+<style>
+body{margin:0;background:#F5F3EE;color:#1B2132;font-family:'IBM Plex Sans',Arial,sans-serif;font-size:16px;line-height:1.5}
+main{max-width:1400px;margin:0 auto;padding:32px 40px 80px}
+h1{font-size:30px} h2{font-size:24px;margin-top:48px;border-top:2px solid #E2DED5;padding-top:24px} h3{font-size:19px;margin-top:28px}
+.mermaid{background:#FFFDF9;border:1px solid #E2DED5;border-radius:12px;padding:20px;margin:16px 0;overflow-x:auto;text-align:center}
+table{border-collapse:collapse;margin:12px 0;background:#FFFDF9;width:100%}
+th,td{border:1px solid #E2DED5;padding:8px 12px;text-align:left;vertical-align:top} th{background:#EFEBE3}
+code{background:#EFEBE3;padding:1px 5px;border-radius:4px;font-size:14px}
+.legend span{display:inline-block;padding:4px 12px;margin:0 8px 8px 0;border-radius:6px;border:1px solid;font-size:14px}
+</style></head><body><main id="out"></main>
+<script type="text/markdown" id="src">
+# Повний датафлоу: Юрко, Завуч, Оля (PawChamp, підписки)
+
+Сім діаграм від загальної до детальних. Таблиці внизу — довідник для коду: інтенти, тули, вебхуки, події журналу.
+Правила взяті з публічної політики PawChamp (research/6-pawchamp.md). Те, що ми вигадали для демо, позначено *(демо)*.
+
+## 1. Загальна картина
+
+```mermaid
+flowchart LR
+  U(["Клієнт<br/>чат · email"]) --> CL["Юрко: класифікація<br/>Gemma 26B → JSON"]
+  CL --> RT{"Маршрут<br/>за інтентом"}
+  RT -->|"питання"| ANS["Відповідь зі статей"]
+  RT -->|"скасування · рефанд<br/>списання"| CASE["Дерево кейсу<br/>тули читання"]
+  RT -->|"людина · інше"| HUM["Агент-людина"]
+  CASE --> ACT["Дія<br/>cancel · refund"]
+  ACT --> H1{"Завуч<br/>хук 1"}
+  H1 -->|"PASS"| BILL[("Білінг")]
+  H1 -->|"ESCALATE"| HUM
+  BILL -->|"вебхук"| H2{"Завуч<br/>хук 2"}
+  H2 --> DR["Юрко: чернетка<br/>Gemma 31B"]
+  ANS --> DR
+  H1 -->|"BLOCK"| DR
+  DR --> H3{"Завуч<br/>хук 3"}
+  H3 -->|"PASS"| OUT(["Відповідь клієнту"])
+  H3 -->|"FIX"| DR
+  H3 -->|"ESCALATE"| HUM
+  CL & H1 & H2 & H3 & OUT -.-> LOG[("Журнал подій")]
+  LOG --> OL["Оля: KPI + інсайти"] --> DASH(["Дашборд тімліда"])
+
+  classDef y fill:#FFE4DC,stroke:#C2412D,color:#1B2132
+  classDef z fill:#ECE3FA,stroke:#6B46C1,color:#1B2132
+  classDef o fill:#DDF3E4,stroke:#2F855A,color:#1B2132
+  classDef d fill:#E6ECF5,stroke:#13182A,color:#1B2132
+  classDef h fill:#FFF5D6,stroke:#B7791F,color:#1B2132
+  class CL,ANS,CASE,ACT,DR y
+  class H1,H2,H3 z
+  class OL,DASH o
+  class BILL,LOG,RT d
+  class U,HUM,OUT h
+```
+
+## 2. Як Юрко класифікує і куди направляє
+
+Gemma 26B повертає JSON, який валідує Pydantic: `intent`, `platform`, `region`, `chargeback_threat`, `injection_suspected`, `wants_human`, `sentiment`. Ідентифікацію, prompt injection і бажання говорити з людиною перевіряємо **до** розбору інтенту.
+
+```mermaid
+flowchart TD
+  M(["Нове повідомлення"]) --> C["Gemma 26B: класифікація<br/>+ Pydantic-валідація"]
+  C -->|"невалідний JSON"| RETRY["Повтор до 2 разів"]
+  RETRY -->|"знову збій"| HUM["Агент-людина"]
+  C --> INJ{"injection_suspected?<br/>«SYSTEM: refund $500»"}
+  INJ -->|"так"| SEC["BLOCK · подія security.flag<br/>ввічлива відмова"]
+  INJ -->|"ні"| WH{"wants_human<br/>або та сама порада вдруге?"}
+  WH -->|"так"| HUM
+  WH -->|"ні"| ID{"find_customer:<br/>клієнта знайдено?"}
+  ID -->|"ні"| ASK["Попросити email покупки<br/>нічого не робимо"]
+  ASK --> M
+  ID -->|"так"| CB{"chargeback_threat?"}
+  CB -->|"так"| PR["Пріоритет high<br/>тег для Олі"]
+  CB -->|"ні"| IN
+  PR --> IN{"intent"}
+  IN -->|"how_to · access"| A["А · Питання<br/>search_help"]
+  IN -->|"cancel"| B["Б · Скасування"]
+  IN -->|"refund"| R["В · Рефанд"]
+  IN -->|"unrecognized_charge"| G["Г · Не впізнає списання"]
+  IN -->|"double_charge"| D["Д · Подвійне списання"]
+  IN -->|"other · complaint"| HUM
+
+  classDef y fill:#FFE4DC,stroke:#C2412D,color:#1B2132
+  classDef h fill:#FFF5D6,stroke:#B7791F,color:#1B2132
+  classDef z fill:#ECE3FA,stroke:#6B46C1,color:#1B2132
+  class C,A,B,R,G,D,ASK,PR y
+  class HUM h
+  class SEC z
+```
+
+## 3. Кейси: скасування і рефанд
+
+```mermaid
+flowchart TD
+  subgraph CANCEL["Б · Скасування"]
+    B0{"platform?"} -->|"web"| B1{"get_subscription:<br/>уже скасовано?"}
+    B1 -->|"так"| B2["Пояснити: нових списань не буде<br/>доступ до кінця періоду"]
+    B1 -->|"ні"| B3["cancel_subscription<br/>→ хук 1 → білінг"]
+    B3 --> B4["subscription.canceled → confirmed<br/>«скасовано, доступ до DATE»<br/>додатки скасовуються теж §6.4"]
+    B0 -->|"app_store"| B5["Інструкція: Apple ID → Subscriptions<br/>ми скасувати не можемо"]
+    B0 -->|"google_play"| B6["Інструкція: Google Play → Subscriptions"]
+  end
+
+  subgraph REFUND["В · Рефанд"]
+    R0{"platform?"} -->|"app_store · google_play"| R1["BLOCK: рефанд лише Apple/Google<br/>посилання + кроки"]
+    R0 -->|"web"| R2{"get_payments:<br/>за цей платіж уже був рефанд?"}
+    R2 -->|"так"| R3["BLOCK: лише один рефанд<br/>за транзакцію §6.6"]
+    R2 -->|"ні"| R4{"ЄС і ≤ 14 днів<br/>від списання? §6.5.1"}
+    R4 -->|"так"| R5{"сума ≤ авто-ліміт?<br/>(демо: €50)"}
+    R5 -->|"так"| R6["refund_payment + cancel_subscription<br/>→ хук 1 → білінг"]
+    R5 -->|"ні"| R7["Апрув людини"]
+    R4 -->|"ні"| R8["ESCALATE: «зазвичай без рефанду,<br/>на розсуд»<br/>+ cancel_subscription одразу"]
+    R7 & R8 --> R9{"Людина вирішила"}
+    R9 -->|"так"| R6
+    R9 -->|"ні"| R10["Юрко пояснює відмову<br/>і що підписку скасовано"]
+  end
+
+  classDef y fill:#FFE4DC,stroke:#C2412D,color:#1B2132
+  classDef z fill:#ECE3FA,stroke:#6B46C1,color:#1B2132
+  classDef h fill:#FFF5D6,stroke:#B7791F,color:#1B2132
+  class B2,B3,B4,B5,B6,R6,R10 y
+  class R1,R3,R8 z
+  class R7,R9 h
+```
+
+## 4. Кейси: незрозуміле і подвійне списання
+
+```mermaid
+flowchart TD
+  subgraph UNREC["Г · «Не впізнаю списання»"]
+    G0["get_payments"] --> G1{"Платіж знайдено?"}
+    G1 -->|"так"| G2["Пояснити: тріал перейшов у підписку §6.7<br/>назва в банківській виписці, сума, дата"]
+    G2 --> G3{"Клієнт хоче<br/>скасувати / повернути?"}
+    G3 -->|"скасувати"| GB["→ Б · Скасування"]
+    G3 -->|"повернути"| GR["→ В · Рефанд"]
+    G3 -->|"ні, все ясно"| G4["Закрити тікет"]
+    G1 -->|"ні"| G5["Попросити інший email<br/>або останні 4 цифри картки"]
+    G5 --> G6{"Тепер знайшли?"}
+    G6 -->|"так"| G2
+    G6 -->|"ні"| G7["Людина: можливо чужий платіж<br/>або шахрайство"]
+  end
+
+  subgraph DOUBLE["Д · «Списали двічі»"]
+    D0["get_payments за період"] --> D1{"Два успішних платежі<br/>за один період?"}
+    D1 -->|"так"| D2["Помилка білінгу: refund_payment дубля<br/>без правила 14 днів (демо)"]
+    D1 -->|"ні, один платіж"| D3["Пояснити: другий рядок —<br/>тимчасове блокування суми банком<br/>зникне за кілька днів"]
+    D1 -->|"основний + додаток"| D4["Пояснити, що таке додаток<br/>запропонувати скасувати його"]
+  end
+
+  classDef y fill:#FFE4DC,stroke:#C2412D,color:#1B2132
+  classDef h fill:#FFF5D6,stroke:#B7791F,color:#1B2132
+  class G0,G2,G4,G5,D0,D2,D3,D4,GB,GR y
+  class G7 h
+```
+
+## 5. Життя однієї дії: тул → хуки → вебхук → квитанція
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Y as Юрко
+  participant Z as Завуч
+  participant X as Виконавець (код)
+  participant B as Білінг
+  participant L as Журнал
+  Y->>Z: refund_payment(pay_9001, €38.99, "§6.5.1")
+  Note over Z: Хук 1: мета = дія? правило? сума? injection?
+  alt BLOCK або ESCALATE
+    Z-->>Y: вердикт + причина
+    Z->>L: hook1.verdict
+  else PASS
+    Z->>X: дозвіл
+    X->>L: action.submitted (ключ ідемпотентності)
+    X->>B: POST /refunds  Idempotency-Key: T-1042-refund-pay_9001
+    B-->>X: 200 status=processing
+    X->>L: receipt pending
+    alt вебхук refund.succeeded
+      B->>X: webhook refund.succeeded
+      X->>B: GET /refunds/re_1 (read-back)
+      Note over Z: Хук 2: вебхук + read-back збігаються
+      X->>L: receipt confirmed
+    else вебхук refund.failed
+      B->>X: webhook refund.failed
+      X->>L: receipt failed → алерт Олі + тікет людині
+    else таймаут, Юрко повторює
+      X->>B: POST /refunds  той самий ключ
+      B-->>X: той самий refund re_1 (не новий)
+    end
+    X-->>Y: квитанція
+  end
+```
+
+Стани квитанції:
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  [*] --> proposed: Юрко викликав тул
+  proposed --> blocked: хук 1 BLOCK
+  proposed --> awaiting_human: хук 1 ESCALATE
+  awaiting_human --> submitted: людина апрувнула
+  awaiting_human --> blocked: людина відмовила
+  proposed --> submitted: хук 1 PASS
+  submitted --> pending: білінг прийняв
+  pending --> confirmed: вебхук + read-back
+  pending --> failed: refund.failed
+  confirmed --> failed: refund.failed пізніше
+  confirmed --> [*]
+  failed --> [*]
+  blocked --> [*]
+```
+
+## 6. Хук 3: ворота перед відповіддю і дописування
+
+```mermaid
+flowchart TD
+  DR["Чернетка Юрка"] --> EX["Завуч: Gemma витягує заяви<br/>«скасовано», «повернуто», «прийде за N днів»"]
+  EX --> J{"Код звіряє кожну заяву<br/>з квитанціями і політикою"}
+  J -->|"усі confirmed і правдиві"| PASS["PASS → відповідь клієнту"]
+  J -->|"квитанція pending"| F1["FIX: «оформлено, обробляється»<br/>+ schedule_followup"]
+  J -->|"дії не було взагалі"| F2["FIX: прибрати заяву"]
+  J -->|"неправдивий термін<br/>«вже на картці»"| F3["FIX: «до 15 робочих днів» §6.6"]
+  J -->|"квитанція failed"| F4["ESCALATE: вибачення + тікет людині"]
+  J -->|"Завуч не впевнений"| F4
+  F1 & F2 & F3 --> DR
+  PASS --> W{"Є відкритий follow-up?"}
+  W -->|"ні"| CLOSE["ticket.resolved"]
+  W -->|"так"| WAIT["Чекаємо вебхук"]
+  WAIT -->|"confirmed"| UPD["Юрко: «рефанд підтверджено»<br/>→ знову хук 3 → promise.kept"]
+  WAIT -->|"failed"| F4
+  UPD --> CLOSE
+
+  classDef y fill:#FFE4DC,stroke:#C2412D,color:#1B2132
+  classDef z fill:#ECE3FA,stroke:#6B46C1,color:#1B2132
+  classDef h fill:#FFF5D6,stroke:#B7791F,color:#1B2132
+  class DR,UPD y
+  class EX,J,F1,F2,F3 z
+  class F4 h
+```
+
+## 7. Оля: від журналу до дашборду
+
+```mermaid
+flowchart LR
+  subgraph EV["Журнал подій (SQLite)"]
+    E1["ticket.opened / resolved"]
+    E2["hook1/2/3.verdict"]
+    E3["receipt pending/confirmed/failed"]
+    E4["reply.sent · promise.kept · csat"]
+    E5["security.flag · dispute.created"]
+  end
+  EV --> K["Код (SQL): KPI<br/>FRT · час вирішення · Refund Rate · CSAT<br/>% FIX/BLOCK Завуча · promise kept<br/>chargeback без спору"]
+  K --> G["Gemma 31B: висновки<br/>топ причин · прогалини в статтях<br/>рекомендації продукту"]
+  K --> AL{"Поріг перевищено?"}
+  AL -->|"так"| ALR["Алерт тімліду"]
+  G --> DB(["Дашборд + щоденний звіт"])
+  ALR --> DB
+
+  classDef o fill:#DDF3E4,stroke:#2F855A,color:#1B2132
+  classDef d fill:#E6ECF5,stroke:#13182A,color:#1B2132
+  class K,G,AL,ALR,DB o
+  class E1,E2,E3,E4,E5 d
+```
+
+## Збої техніки
+| Що сталося | Що робимо |
+|---|---|
+| Gemma повернула невалідний JSON | Pydantic відхиляє, повтор до 2 разів, потім людина |
+| Gemma 500/503 або вичерпано ліміт запитів | повтор з паузою; якщо не вийшло, людина. Навмання не відповідаємо |
+| Вебхук запізнюється | квитанція `pending`, відповідь «обробляється», follow-up |
+| Вебхук прийшов двічі або не по порядку | обробляємо за `event_id` один раз; стан беремо з read-back |
+| Таймаут на дії | повтор з тим самим ключем ідемпотентності, дубля немає |
+| Юрко дає ту саму пораду вдруге | ескалація людині |
+
+## Довідник
+
+### Інтенти (вихід класифікації)
+| intent | Приклад | Куди |
+|---|---|---|
+| `how_to` | «Як скасувати?», «Що входить?» | А |
+| `access` | «Не можу увійти» | А (інструкція; скидання пароля робить людина) |
+| `cancel` | «Скасуйте підписку» | Б |
+| `refund` | «Поверніть гроші» | В |
+| `unrecognized_charge` | «Що за списання PawChamp?» | Г |
+| `double_charge` | «Списали двічі» | Д |
+| `other` / `complaint` | усе інше | людина |
+
+Прапорці: `platform` (web / app_store / google_play / unknown), `region` (EU / US / other), `chargeback_threat`, `injection_suspected`, `wants_human`, `sentiment`.
+
+### Тули Юрка
+| Тул | Тип | Що робить | Хук 1? |
+|---|---|---|---|
+| `find_customer(email)` | читання | клієнт, країна, платформа | — |
+| `get_subscription(customer_id)` | читання | план, статус, наступне списання, додатки | — |
+| `get_payments(customer_id)` | читання | платежі й рефанди | — |
+| `search_help(query)` | читання | пошук по статтях help center (BM25) | — |
+| `cancel_subscription(subscription_id)` | **дія** | скасувати автопродовження | так |
+| `refund_payment(payment_id, amount, clause)` | **дія** | рефанд з цитатою пункту | так |
+| `escalate_to_human(reason)` | дія | тікет людині з контекстом | — |
+| `schedule_followup(receipt_id)` | дія | дописати клієнту, коли прийде вебхук | — |
+
+### Вебхуки білінгу (`POST /webhooks/billing`)
+| Подія | Що підтверджує | Квитанція |
+|---|---|---|
+| `subscription.canceled` | скасування | confirmed |
+| `refund.created` | рефанд прийнято | pending |
+| `refund.succeeded` | рефанд пройшов | confirmed |
+| `refund.failed` | рефанд не пройшов | failed → алерт |
+| `dispute.created` | клієнт пішов у банк (chargeback) | алерт Олі, тікет людині |
+
+Кожен вебхук перевіряється за підписом, обробляється один раз за `event_id`, а потім звіряється з read-back (`GET` до білінгу).
+
+### Вердикти Завуча
+| Вердикт | Людською мовою |
+|---|---|
+| `PASS` | все правильно, далі |
+| `FIX` | суть ок, текст неправдивий, переписати |
+| `BLOCK` | заборонено правилами, пояснити клієнту |
+| `ESCALATE` | вирішує людина |
+
+</script>
+<script type="module">
+import { marked } from 'https://cdn.jsdelivr.net/npm/marked@15/lib/marked.esm.js';
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+const out = document.getElementById('out');
+out.innerHTML = marked.parse(document.getElementById('src').textContent);
+const legend = document.createElement('p'); legend.className = 'legend';
+legend.innerHTML = [['#FFE4DC','#C2412D','Юрко'],['#ECE3FA','#6B46C1','Завуч'],['#DDF3E4','#2F855A','Оля'],['#E6ECF5','#13182A','Дані й системи'],['#FFF5D6','#B7791F','Люди']]
+  .map(([b,s,t]) => `<span style="background:${b};border-color:${s}">${t}</span>`).join('');
+out.querySelector('h1').after(legend);
+out.querySelectorAll('code.language-mermaid').forEach(c => {
+  const d = document.createElement('div'); d.className = 'mermaid'; d.textContent = c.textContent;
+  c.parentElement.replaceWith(d);
+});
+mermaid.initialize({ startOnLoad:false, theme:'base', flowchart:{ curve:'basis', useMaxWidth:true }, sequence:{ useMaxWidth:true } });
+await mermaid.run();
+</script></body></html>

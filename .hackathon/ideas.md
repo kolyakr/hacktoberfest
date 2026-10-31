@@ -103,4 +103,5 @@ What round 2 changed:
   - **Юрко** is the main agent. It talks to the customer, uses tools and decides whether a refund is due.
   - **Завуч** is the verifier. It checks Юрко through 3 hooks on key actions: before the action (did it understand the task, does policy allow it), after the action (did the refund really go through: webhook + read-back) and before the reply (does every claim have a receipt).
   - **Оля** is the analyst. She computes KPIs from the event log (FRT, resolution time, Refund Rate, CSAT, Завуч block rate, promise-kept rate) and turns them into insights and alerts.
+- **MVP scope (what we build today): [mvp.md](mvp.md).** One problem (unexpected subscription charge → cancel + refund), 4 tools, 4 rules, 3 webhooks, 3 screens, 4 demo scenarios. The full map of later cases: [dataflow.md](dataflow.md).
 - Supersedes the earlier "Receipts" ranking above. Research: research/6-pawchamp.md, 10-action-verification.md, 11-verifier-agent.md.
