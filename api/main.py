@@ -21,6 +21,7 @@ load_dotenv()  # .env: OPENAI_*, AGENT_IMPL, TOOLS_IMPL, STORE, SUPABASE_*; real
 
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    flow.seed_demo()
     loop = asyncio.create_task(flow.webhook_loop(app))
     yield
     loop.cancel()

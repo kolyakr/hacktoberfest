@@ -13,7 +13,7 @@ import httpx
 from fastapi import FastAPI, HTTPException
 
 import services
-from api import events, fake_agent, mirror, store
+from api import events, fake_agent, mirror, seed, store
 from contracts._kit import impl, load_fixture
 from contracts.agent import AgentInput, AgentOutput, HumanDecision, Message, OlyaReport, Verdict
 from contracts.api import (
@@ -213,7 +213,15 @@ def reset() -> DemoReset:
         store.clear()
         events.clear()
         mirror.wipe()
+    seed_demo()
     return DemoReset(ok=True, customers=sim.customer_count())
+
+
+def seed_demo() -> None:
+    """SEED_DEMO=1: add a week of synthetic past tickets (api/seed.py), so the console has history."""
+    if seed.enabled():
+        with store.LOCK:
+            seed.seed(now())
 
 
 # --- billing webhooks: the background loop ------------------------------------------------------------
