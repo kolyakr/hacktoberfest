@@ -75,9 +75,10 @@ def _run(inp: AgentInput) -> AgentOutput:
 
 
 def _answer(first: AgentOutput, t: store.Ticket) -> AgentOutput:
-    now_ = {r.id: r for r in t.receipts}
+    """actions = all of the ticket's receipts as they are now: the chat replaces its "Your requests" card with
+    every answer, so a follow-up that takes no action still shows a refund that has since been confirmed."""
     return first.model_copy(update={"status": t.status, "pending_action": t.pending_action,
-                                    "actions": [now_.get(r.id, r) for r in first.actions]})
+                                    "actions": list(t.receipts)})
 
 
 def _apply(t: store.Ticket, out: AgentOutput, at: datetime) -> None:

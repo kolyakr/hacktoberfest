@@ -98,6 +98,20 @@ def test_chat_returns_the_reply_even_when_billing_moved_during_the_run(client, m
     assert out.status == detail.status
 
 
+def test_chat_follow_up_shows_the_tickets_receipts_as_they_are_now(client, monkeypatch):
+    """The chat's "Your requests" card is replaced by every answer: a follow-up message that takes no new action
+    ("has my refund gone through?") still carries the ticket's receipts, at their current status."""
+    flow = pytest.importorskip("api.flow")
+    first = AgentOutput.model_validate(client.post("/api/chat", json=load_fixture(ChatRequest, "marta").model_dump()).json())
+    assert first.actions
+    real = flow._agent
+    monkeypatch.setattr(flow, "_agent", lambda inp: real(inp).model_copy(update={"actions": []}))
+    ask = {"ticket_id": first.ticket_id, "email": "marta.k@example.com", "text": "Has my refund gone through?"}
+    out = AgentOutput.model_validate(client.post("/api/chat", json=ask).json())
+    detail = TicketDetail.model_validate(client.get(f"/api/tickets/{first.ticket_id}").json())
+    assert [(r.id, r.status) for r in out.actions] == [(r.id, r.status) for r in detail.receipts]
+
+
 def test_real_report_is_written_once_per_new_events(client, monkeypatch):
     """Olya's real report calls gpt-5: the dashboard may load it often, but it's written again only after new events."""
     flow = pytest.importorskip("api.flow")
