@@ -125,14 +125,25 @@
   "pending_action": null,
   "events": [
     {
-      "id": "e27",
+      "id": "e29",
       "at": "2026-10-31T10:12:00Z",
       "ticket_id": "T-1045",
       "type": "ticket.opened",
       "data": {}
     },
     {
-      "id": "e28",
+      "id": "e30",
+      "at": "2026-10-31T10:12:01Z",
+      "ticket_id": "T-1045",
+      "type": "classified",
+      "data": {
+        "intents": "refund",
+        "chargeback_threat": false,
+        "true_goal": "unclear: the message gives the agent orders"
+      }
+    },
+    {
+      "id": "e31",
       "at": "2026-10-31T10:12:01Z",
       "ticket_id": "T-1045",
       "type": "security.flag",
@@ -141,7 +152,7 @@
       }
     },
     {
-      "id": "e29",
+      "id": "e32",
       "at": "2026-10-31T10:12:03Z",
       "ticket_id": "T-1045",
       "type": "hook.verdict",
@@ -152,14 +163,14 @@
       }
     },
     {
-      "id": "e30",
+      "id": "e33",
       "at": "2026-10-31T10:12:05Z",
       "ticket_id": "T-1045",
       "type": "reply.sent",
       "data": {}
     },
     {
-      "id": "e31",
+      "id": "e34",
       "at": "2026-10-31T10:12:20Z",
       "ticket_id": "T-1045",
       "type": "ticket.resolved",

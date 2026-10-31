@@ -115,14 +115,25 @@
   "pending_action": null,
   "events": [
     {
-      "id": "e23",
+      "id": "e24",
       "at": "2026-10-31T10:10:00Z",
       "ticket_id": "T-1044",
       "type": "ticket.opened",
       "data": {}
     },
     {
-      "id": "e24",
+      "id": "e25",
+      "at": "2026-10-31T10:10:02Z",
+      "ticket_id": "T-1044",
+      "type": "classified",
+      "data": {
+        "intents": "refund,cancel",
+        "chargeback_threat": false,
+        "true_goal": "stop paying for the App Store subscription and get this week's $9.99 back"
+      }
+    },
+    {
+      "id": "e26",
       "at": "2026-10-31T10:10:03Z",
       "ticket_id": "T-1044",
       "type": "hook.verdict",
@@ -133,14 +144,14 @@
       }
     },
     {
-      "id": "e25",
+      "id": "e27",
       "at": "2026-10-31T10:10:06Z",
       "ticket_id": "T-1044",
       "type": "reply.sent",
       "data": {}
     },
     {
-      "id": "e26",
+      "id": "e28",
       "at": "2026-10-31T10:10:30Z",
       "ticket_id": "T-1044",
       "type": "ticket.resolved",

@@ -167,6 +167,17 @@
     },
     {
       "id": "e16",
+      "at": "2026-10-31T10:05:02Z",
+      "ticket_id": "T-1043",
+      "type": "classified",
+      "data": {
+        "intents": "refund",
+        "chargeback_threat": false,
+        "true_goal": "the trial turned into a $38.99 month he barely used; wants the money back"
+      }
+    },
+    {
+      "id": "e17",
       "at": "2026-10-31T10:05:03Z",
       "ticket_id": "T-1043",
       "type": "hook.verdict",
@@ -177,14 +188,14 @@
       }
     },
     {
-      "id": "e17",
+      "id": "e18",
       "at": "2026-10-31T10:05:04Z",
       "ticket_id": "T-1043",
       "type": "handed_to_human",
       "data": {}
     },
     {
-      "id": "e18",
+      "id": "e19",
       "at": "2026-10-31T10:05:12Z",
       "ticket_id": "T-1043",
       "type": "reply.sent",

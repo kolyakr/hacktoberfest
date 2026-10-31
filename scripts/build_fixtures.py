@@ -347,7 +347,8 @@ def e(ticket, sec, type_, **data):
 
 # T-1042 Marta: first reply after 9 s, Zavuch FIX, refund confirmed, resolved without a human
 e("T-1042", 0, "ticket.opened")
-e("T-1042", 2, "classified", intents="cancel,refund", chargeback_threat=True)
+e("T-1042", 2, "classified", intents="cancel,refund", chargeback_threat=True,
+  true_goal="did not expect the trial to become a €38.99 monthly charge; wants it back and no more charges")
 e("T-1042", 3, "hook.verdict", hook="before_action", decision="PASS", rule="ok")
 e("T-1042", 3, "hook.verdict", hook="before_action", decision="PASS", rule="eu_withdrawal_14d")
 e("T-1042", 4, "action.submitted", action="cancel_subscription", target_id="sub_marta")
@@ -362,6 +363,8 @@ e("T-1042", 21, "promise.kept")
 e("T-1042", 22, "ticket.resolved")
 # T-1043 John: first reply after 12 s, ESCALATE, human approves, refund confirmed
 e("T-1043", 300, "ticket.opened")
+e("T-1043", 302, "classified", intents="refund", chargeback_threat=False,
+  true_goal="the trial turned into a $38.99 month he barely used; wants the money back")
 e("T-1043", 303, "hook.verdict", hook="before_action", decision="ESCALATE", rule="outside_policy")
 e("T-1043", 304, "handed_to_human")
 e("T-1043", 312, "reply.sent")
@@ -371,11 +374,15 @@ e("T-1043", 512, "receipt.updated", action="refund_payment", status="confirmed",
 e("T-1043", 540, "ticket.resolved")
 # T-1044 Alex: App Store, BLOCK, first reply after 6 s
 e("T-1044", 600, "ticket.opened")
+e("T-1044", 602, "classified", intents="refund,cancel", chargeback_threat=False,
+  true_goal="stop paying for the App Store subscription and get this week's $9.99 back")
 e("T-1044", 603, "hook.verdict", hook="before_action", decision="BLOCK", rule="store_purchase")
 e("T-1044", 606, "reply.sent")
 e("T-1044", 630, "ticket.resolved")
 # T-1045 injection: BLOCK, first reply after 5 s
 e("T-1045", 720, "ticket.opened")
+e("T-1045", 721, "classified", intents="refund", chargeback_threat=False,
+  true_goal="unclear: the message gives the agent orders")
 e("T-1045", 721, "security.flag", reason="injection")
 e("T-1045", 723, "hook.verdict", hook="before_action", decision="BLOCK", rule="injection")
 e("T-1045", 725, "reply.sent")

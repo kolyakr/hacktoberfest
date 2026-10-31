@@ -273,7 +273,8 @@
       "type": "classified",
       "data": {
         "intents": "cancel,refund",
-        "chargeback_threat": true
+        "chargeback_threat": true,
+        "true_goal": "did not expect the trial to become a €38.99 monthly charge; wants it back and no more charges"
       }
     },
     {
