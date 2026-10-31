@@ -15,12 +15,13 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from agent import llm, yurko
-from contracts._kit import registry
+from contracts._kit import impl, registry
 from contracts.agent import (
     ActionContext,
     AgentInput,
     AgentOutput,
     Classification,
+    Hook,
     Message,
     ProposedAction,
     TicketStatus,
@@ -40,29 +41,36 @@ from contracts.tools import (
 try:
     from agent.zavuch import claims as zavuch_claims
     from agent.zavuch import rules as zavuch_rules
-except ImportError:  # until zavuch pushes: every hook passes, and we say so in the verdict
+except ImportError:  # until zavuch pushes; see missing_zavuch()
     zavuch_claims = zavuch_rules = None
 
 log = logging.getLogger(__name__)
 
 SETTLE_SECONDS = float(os.getenv("AGENT_SETTLE_S", "1.5"))  # billing confirms a cancel in ~1 s
 MAX_REWRITES = 2
-STUB_REASON = "Zavuch is not wired in yet: stub PASS."
 
 
-# --- Zavuch hooks (stubbed until agent/zavuch/ exists) --------------------------------------------------
+# --- Zavuch hooks ----------------------------------------------------------------------------------------
+
+
+def missing_zavuch(hook: Hook, now: datetime, action: ProposedAction | None = None) -> Verdict:
+    """No agent/zavuch yet. Fake tools move no money, so PASS and say so. Real tools fail closed."""
+    if impl("TOOLS_IMPL") == "fake":
+        return Verdict(hook=hook, decision="PASS", rule="ok", action=action, at=now,
+                       reason="Zavuch is not wired in yet: stub PASS on fake tools.")
+    return Verdict(hook=hook, decision="ESCALATE", rule="unsure", action=action, at=now,
+                   reason="Zavuch is not available, so nothing was checked: a human must decide.")
 
 
 def before_action(ctx: ActionContext) -> Verdict:
     if zavuch_rules is None:
-        return Verdict(hook="before_action", decision="PASS", rule="ok", reason=STUB_REASON,
-                       action=ctx.proposal, at=ctx.now)
+        return missing_zavuch("before_action", ctx.now, ctx.proposal)
     return zavuch_rules.before_action(ctx)
 
 
 def before_reply(draft: str, receipts: list[ActionReceipt], now: datetime) -> Verdict:
     if zavuch_claims is None:
-        return Verdict(hook="before_reply", decision="PASS", rule="ok", reason=STUB_REASON, at=now)
+        return missing_zavuch("before_reply", now)
     return zavuch_claims.judge_claims(zavuch_claims.extract_claims(draft), receipts, now)
 
 
@@ -226,9 +234,44 @@ def customer_message(run: Run) -> AgentOutput:
     return run.reply()
 
 
+def receipt_update(run: Run) -> AgentOutput:
+    """Billing settled something (webhook, via api/). Speak only when the news is final."""
+    receipts = run.all_receipts()
+    run.receipts = [r for r in receipts if r.status != "pending"]  # what the console should refresh
+    if any(r.status == "failed" for r in receipts):
+        run.facts.append("Billing has just reported that an action FAILED. Apologise and say a colleague "
+                         "will sort it out personally.")
+        run.hand_to_human("Billing reported a failed action.")
+        return run.reply()
+    if receipts and all(r.status == "confirmed" for r in receipts):
+        run.facts.append("Billing has just confirmed the last outstanding action. Tell the customer the "
+                         "good news in one or two sentences.")
+        return run.reply()
+    return run.output(None)  # something is still pending: nothing new worth a message
+
+
+def human_decision(run: Run) -> AgentOutput:
+    """A human answered an ESCALATE. Approve = execute the pending action; the human's call, not Zavuch's."""
+    inp = run.inp
+    if inp.pending_action is None or inp.decision is None:
+        raise ValueError(f"{inp.ticket_id}: human_decision needs pending_action and decision")
+    action, decision = inp.pending_action, inp.decision
+    what = "refund" if action.tool == "refund_payment" else "cancellation"
+    if decision.approve:
+        run.execute(action)
+        run.settle()
+        run.facts.append(f"A human colleague ({decision.agent_name}) approved the {what} request. {decision.note}".strip())
+    else:
+        why = decision.note or "website purchases are generally non-refundable (Membership Policy)"
+        run.facts.append(f"A human colleague ({decision.agent_name}) reviewed the {what} request and declined "
+                         f"it: {why}. Explain kindly; do not offer it again.")
+    return run.reply()
+
+
+TRIGGERS = {"customer_message": customer_message, "receipt_update": receipt_update, "human_decision": human_decision}
+
+
 def run(inp: AgentInput) -> AgentOutput:
     """The only entry point api/ calls. Dispatches on the trigger."""
     log.info("run %s trigger=%s", inp.ticket_id, inp.trigger)
-    if inp.trigger == "customer_message":
-        return customer_message(Run(inp))
-    raise NotImplementedError(f"trigger {inp.trigger!r}: yurko-4")  # receipt_update, human_decision
+    return TRIGGERS[inp.trigger](Run(inp))

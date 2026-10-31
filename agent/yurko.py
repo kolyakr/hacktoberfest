@@ -54,5 +54,5 @@ def draft_reply(facts: str, feedback: str | None = None) -> str:
             "Rewrite it so that every statement matches the FACTS."
         )
     elif os.getenv("DEMO_OVERCLAIM") == "1":
-        user += f"\n\n{prompts.OVERCLAIM}"
+        return llm.text(llm.BIG, prompts.OVERCLAIM_SYSTEM, user)
     return llm.text(llm.BIG, prompts.DRAFT_SYSTEM, user)
