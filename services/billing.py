@@ -3,6 +3,7 @@
 The clock is injected: tests pass a fixed `now`, the server passes real time. Nothing here calls an LLM.
 """
 
+import os
 from collections.abc import Callable
 from datetime import datetime, timedelta
 
@@ -17,7 +18,9 @@ from contracts.tools import (
 )
 
 CANCEL_DELAY_S = 1
-REFUND_DELAY_S = 10
+# The bank's answer to a refund. The demo video sets BILLING_REFUND_DELAY_S=20 so the receipt is still 🟡 when
+# Yurko's first reply lands, and turns 🟢 on screen afterwards.
+REFUND_DELAY_S = float(os.getenv("BILLING_REFUND_DELAY_S", "10"))
 DEMO_CUSTOMERS = ("marta", "john", "alex")
 
 
