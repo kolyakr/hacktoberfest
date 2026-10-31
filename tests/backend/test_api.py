@@ -71,3 +71,44 @@ def test_fake_agent_uses_real_billing_whatever_tools_impl(monkeypatch):
     assert john["status"] == "awaiting_human"
     approved = c.post(f"/api/tickets/{john['ticket_id']}/decision", json={"approve": True}).json()
     assert approved["status"] == "waiting_billing"
+
+
+def test_chat_returns_the_reply_even_when_billing_moved_during_the_run(client, monkeypatch):
+    """A webhook can land while Yurko is still answering (the ticket goes stale and the agent runs again with
+    receipt_update). The chat still gets the reply to its message, with the ticket's latest status."""
+    flow = pytest.importorskip("api.flow")
+    from api import store
+
+    real, calls = flow._agent, []
+
+    def agent(inp):
+        out = real(inp)
+        calls.append(inp.trigger)
+        if len(calls) == 1:
+            store.get(inp.ticket_id).stale = True  # as if a webhook arrived mid-run
+        else:
+            out = out.model_copy(update={"reply": None})  # a follow-up with nothing new to say
+        return out
+
+    monkeypatch.setattr(flow, "_agent", agent)
+    out = AgentOutput.model_validate(client.post("/api/chat", json=load_fixture(ChatRequest, "marta").model_dump()).json())
+    assert calls == ["customer_message", "receipt_update"]
+    assert out.reply is not None and out.reply.text
+    detail = TicketDetail.model_validate(client.get(f"/api/tickets/{out.ticket_id}").json())
+    assert out.status == detail.status
+
+
+def test_real_report_is_written_once_per_new_events(client, monkeypatch):
+    """Olya's real report calls gpt-5: the dashboard may load it often, but it's written again only after new events."""
+    flow = pytest.importorskip("api.flow")
+    report_mod = pytest.importorskip("agent.olya.report")
+    calls = []
+    monkeypatch.setattr(report_mod, "report", lambda evs: calls.append(len(evs)) or load_fixture(OlyaReport))
+    monkeypatch.setenv("AGENT_IMPL", "real")
+    flow.report(), flow.report()
+    assert len(calls) == 1
+    monkeypatch.setenv("AGENT_IMPL", "fake")
+    client.post("/api/chat", json=load_fixture(ChatRequest, "alex").model_dump())
+    monkeypatch.setenv("AGENT_IMPL", "real")
+    flow.report()
+    assert len(calls) == 2

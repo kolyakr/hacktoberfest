@@ -51,7 +51,10 @@ def _input(t: store.Ticket, trigger, at: datetime, decision: HumanDecision | Non
 
 
 def _run(inp: AgentInput) -> AgentOutput:
-    """Run the agent for a ticket already marked busy; apply its output; follow up if billing moved meanwhile."""
+    """Run the agent for a ticket already marked busy; apply its output; follow up if billing moved meanwhile.
+    Returns the first run's output (the answer to this request) with the ticket's status and receipts as they are
+    now; a follow-up run's message reaches the customer through GET /api/tickets/{id}."""
+    first: AgentOutput | None = None
     while True:
         try:
             out = _agent(inp)
@@ -63,11 +66,18 @@ def _run(inp: AgentInput) -> AgentOutput:
         with store.LOCK:
             t = store.get(inp.ticket_id)
             _apply(t, out, now())
+            first = first or out
             if not t.stale:
                 t.busy = False
-                return out
+                return _answer(first, t)
             t.stale = False
             inp = _input(t, "receipt_update", now())
+
+
+def _answer(first: AgentOutput, t: store.Ticket) -> AgentOutput:
+    now_ = {r.id: r for r in t.receipts}
+    return first.model_copy(update={"status": t.status, "pending_action": t.pending_action,
+                                    "actions": [now_.get(r.id, r) for r in first.actions]})
 
 
 def _apply(t: store.Ticket, out: AgentOutput, at: datetime) -> None:
@@ -193,13 +203,19 @@ def ticket(ticket_id: str) -> TicketDetail:
                             pending_action=t.pending_action, events=events.for_ticket(t.id))
 
 
+_report: tuple[int, OlyaReport] | None = None  # (events seen, report): the real report calls gpt-5 (~15 s)
+
+
 def report() -> OlyaReport:
+    global _report
     evs = events.all_events()
     try:
         if impl("AGENT_IMPL") == "real":
             from agent.olya.report import report as olya_report
 
-            return olya_report(evs)
+            if _report is None or _report[0] != len(evs):  # new events: write it again
+                _report = (len(evs), olya_report(evs))
+            return _report[1]
         from agent.olya.kpis import compute
 
         return compute(evs)
@@ -208,6 +224,8 @@ def report() -> OlyaReport:
 
 
 def reset() -> DemoReset:
+    global _report
+    _report = None
     with store.LOCK:
         sim = services.reset()
         store.clear()
