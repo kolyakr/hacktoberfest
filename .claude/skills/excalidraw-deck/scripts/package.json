@@ -1,0 +1,13 @@
+{
+  "name": "excalidraw-deck",
+  "private": true,
+  "type": "module",
+  "description": "Builds Excalidraw slide decks: spec.mjs -> .excalidraw + animated HTML deck + PNG per slide",
+  "dependencies": {
+    "@excalidraw/excalidraw": "0.18.1",
+    "esbuild": "^0.25.0",
+    "playwright-core": "^1.63.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
