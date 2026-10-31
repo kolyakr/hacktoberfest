@@ -1,0 +1,34 @@
+# Applies supabase/migrations to the hosted project on every push to main.
+# Needs repo secrets SUPABASE_ACCESS_TOKEN and SUPABASE_DB_PASSWORD; skips (green) until they exist.
+name: supabase migrations
+
+on:
+  push:
+    branches: [main]
+    paths: ["supabase/migrations/**"]
+  workflow_dispatch:
+
+concurrency: supabase-migrations
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PROJECT_REF: pktvknwzfkvwerxlfwoe
+    steps:
+      - name: skip without secrets
+        if: env.SUPABASE_ACCESS_TOKEN == '' || env.SUPABASE_DB_PASSWORD == ''
+        run: echo "::notice::SUPABASE_ACCESS_TOKEN / SUPABASE_DB_PASSWORD not set; migrations skipped"
+      - uses: actions/checkout@v4
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_DB_PASSWORD != ''
+      - uses: supabase/setup-cli@v1
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_DB_PASSWORD != ''
+        with:
+          version: 2.120.0
+      - name: db push
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_DB_PASSWORD != ''
+        run: |
+          supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+          supabase db push --password "$SUPABASE_DB_PASSWORD"
