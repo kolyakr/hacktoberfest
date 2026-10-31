@@ -14,6 +14,7 @@ Smoke test (live): `uv run python -m agent.llm` prints a Classification for Mart
 
 import logging
 import os
+import re
 from functools import cache
 
 from dotenv import load_dotenv
@@ -42,6 +43,15 @@ def _messages(system: str, user: str) -> list[dict[str, str]]:
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
 
+def _opts(model: str) -> dict:
+    """gpt-5 / o-series take a reasoning effort; low keeps a support reply at seconds, not a minute.
+    Other models (and the non-reasoning *-chat-* ones) reject the parameter, so they get nothing."""
+    effort = os.getenv("OPENAI_REASONING_EFFORT", "low")
+    if not effort or "chat" in model or not re.match(r"^(gpt-5|o\d)", model):
+        return {}
+    return {"reasoning": {"effort": effort}}
+
+
 def _where(e: ValueError) -> str:
     """Error type and field paths only: the values would echo customer text into the logs."""
     if isinstance(e, ValidationError):
@@ -54,7 +64,8 @@ def parse[M: BaseModel](model: str, system: str, user: str, schema: type[M]) -> 
     last: Exception | None = None
     for attempt in (1, 2):
         try:
-            r = client().responses.parse(model=model, input=_messages(system, user), text_format=schema)
+            r = client().responses.parse(model=model, input=_messages(system, user), text_format=schema,
+                                         **_opts(model))
         except ValueError as e:  # pydantic ValidationError and JSONDecodeError are both ValueErrors
             last = e
             log.warning("%s: %s attempt %d did not validate: %s", schema.__name__, model, attempt, _where(e))
@@ -72,7 +83,8 @@ generate_json = parse  # the name PLAN.md uses
 def text(model: str, system: str, user: str) -> str:
     """Ask `model` for prose: the customer reply and Olya's insight (BIG). One retry on empty."""
     for attempt in (1, 2):
-        out = client().responses.create(model=model, input=_messages(system, user)).output_text.strip()
+        out = client().responses.create(model=model, input=_messages(system, user),
+                                        **_opts(model)).output_text.strip()
         if out:
             return out
         log.warning("%s attempt %d returned empty text", model, attempt)

@@ -46,7 +46,7 @@ except ImportError:  # until zavuch pushes; see missing_zavuch()
 
 log = logging.getLogger(__name__)
 
-SETTLE_SECONDS = float(os.getenv("AGENT_SETTLE_S", "1.5"))  # billing confirms a cancel in ~1 s
+SETTLE_SECONDS = float(os.getenv("AGENT_SETTLE_S", "2"))  # cancel webhook: 1 s + a 0.5 s loop tick
 MAX_REWRITES = 2
 
 
@@ -140,13 +140,21 @@ class Run:
         else:
             self.facts.append(f"{proposal.tool} NOT done, refused: {verdict.reason}")
 
-    def execute(self, p: ProposedAction) -> ActionReceipt:
+    def execute(self, p: ProposedAction) -> ActionReceipt | None:
+        """Send a PASSed (or human-approved) action to billing. Billing refusing it is a surprise: a human looks."""
         t = self.inp.ticket_id
-        if p.tool == "cancel_subscription":
-            r = self.tools["cancel_subscription"](CancelSubscriptionArgs(ticket_id=t, subscription_id=p.subscription_id))
-        else:
-            r = self.tools["refund_payment"](RefundPaymentArgs(ticket_id=t, payment_id=p.payment_id,
-                                                               amount=p.amount, policy_clause=p.policy_clause))
+        try:
+            if p.tool == "cancel_subscription":
+                r = self.tools["cancel_subscription"](CancelSubscriptionArgs(ticket_id=t, subscription_id=p.subscription_id))
+            else:
+                r = self.tools["refund_payment"](RefundPaymentArgs(ticket_id=t, payment_id=p.payment_id,
+                                                                   amount=p.amount, policy_clause=p.policy_clause))
+        except ValueError as e:  # the technical reason goes to the console (hand_to_human), not to the customer
+            log.warning("%s: billing refused %s: %s", t, p.tool, e)
+            self.facts.append(f"{p.tool} NOT done: billing could not process it. Say so without technical "
+                              "detail; a human colleague will look into it.")
+            self.hand_to_human(f"Billing refused {p.tool}: {e}")
+            return None
         self.receipts.append(r)
         return r
 
