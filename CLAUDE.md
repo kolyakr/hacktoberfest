@@ -8,13 +8,13 @@ A team builds one product in one day. Every Claude session reads this file.
 @.hackathon/PLAN.md
 
 ## Rules
-- The product's AI is **Gemma 4 via the Gemini API** (`google-genai`). No other model in the product. Claude Code is our build tool, disclosed in README › AI usage.
+- The product's AI is **OpenAI via the `openai` SDK**. No other model provider in the product. Claude Code is our build tool, disclosed in README › AI usage.
 - No secrets anywhere. Keys live in `.env` (names in `.env.example`); never read or print it.
 - Product code is written during the event only.
 
 ## Stack
 - `api/`: FastAPI + Pydantic v2, managed with uv. `api/main.py` exposes `app` with `GET /health`.
-- `agent/`: every Gemma call. Models from env: `GEMMA_FAST_MODEL` for loops and routing, `GEMMA_MODEL` for final answers. Validate every output with Pydantic.
+- `agent/`: every OpenAI call (all in `agent/llm.py`). Models from env: `OPENAI_FAST_MODEL` for loops, routing and checks, `OPENAI_MODEL` for final answers. Structured outputs from the Pydantic models; validate every output with Pydantic.
 - `web/`: Vite + React + TypeScript.
 
 ## Contracts: nobody waits for anybody

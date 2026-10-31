@@ -1,12 +1,12 @@
-# <Project name>
+# Yurko · Zavuch · Olya
 
-> <One-liner: for whom, does what, with Gemma 4.>
+> Yurko, Zavuch, Olya: subscription support agents that cancel and refund, and never say "done" until billing confirms it. Built for a PawChamp-like subscription app (synthetic data).
 
 Built at **Hacktoberfest Hack Day Lviv / PolyTech Code Fest 2026 (MLH)**.
 
 ## Setup
 ```bash
-cp .env.example .env      # add your GEMINI_API_KEY
+cp .env.example .env      # add your OPENAI_API_KEY
 make setup
 claude
 ```
@@ -33,7 +33,7 @@ claude
 | `make ship` | rebase on main, smoke, push |
 
 ## AI usage
-- In the product: Gemma 4 via the Gemini API.
+- In the product: OpenAI models via the OpenAI API (`OPENAI_FAST_MODEL`, `OPENAI_MODEL`).
 - In development: Claude Code (Anthropic).
 
 ## License

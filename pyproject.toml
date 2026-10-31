@@ -7,10 +7,10 @@ dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
     "pydantic>=2.8",
-    "google-genai>=1.20",
     "httpx>=0.27",
     "python-dotenv>=1.0",
     "python-multipart>=0.0.9",
+    "openai>=1.60",
 ]
 
 [dependency-groups]
@@ -32,4 +32,4 @@ ignore = ["E501", "B008"]
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-m 'not live' -p no:cacheprovider"
-markers = ["live: calls the real Gemma API (run with: uv run pytest -m live)"]
+markers = ["live: calls the real OpenAI API (run with: uv run pytest -m live)"]
