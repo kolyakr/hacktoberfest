@@ -1,0 +1,13 @@
+{
+  "tickets_total": 0,
+  "resolved_without_human": 0,
+  "resolved_without_human_pct": 0.0,
+  "avg_first_response_s": 0.0,
+  "zavuch_caught": 0,
+  "false_done_caught": 0,
+  "escalated": 0,
+  "refunded_by_currency": {},
+  "top_reason": "",
+  "recommendation": "",
+  "model": ""
+}

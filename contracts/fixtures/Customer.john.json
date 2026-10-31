@@ -1,0 +1,35 @@
+{
+  "id": "cus_john",
+  "email": "john.d@example.com",
+  "name": "John D.",
+  "country": "US",
+  "region": "US",
+  "subscription": {
+    "id": "sub_john",
+    "plan": "monthly",
+    "price": 38.99,
+    "currency": "USD",
+    "status": "active",
+    "platform": "web",
+    "started_at": "2026-10-04T15:00:00Z",
+    "current_period_end": "2026-11-11T15:00:00Z"
+  },
+  "payments": [
+    {
+      "id": "pay_john_trial",
+      "amount": 0.99,
+      "currency": "USD",
+      "charged_at": "2026-10-04T15:00:00Z",
+      "description": "7-day trial",
+      "refunded_amount": 0.0
+    },
+    {
+      "id": "pay_john_1",
+      "amount": 38.99,
+      "currency": "USD",
+      "charged_at": "2026-10-11T15:00:00Z",
+      "description": "Monthly membership",
+      "refunded_amount": 0.0
+    }
+  ]
+}

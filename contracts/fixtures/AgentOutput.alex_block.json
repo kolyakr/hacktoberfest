@@ -1,0 +1,73 @@
+{
+  "ticket_id": "T-1044",
+  "status": "resolved",
+  "reply": {
+    "id": "m2",
+    "role": "yurko",
+    "text": "You bought PawChamp through the App Store, so only Apple can refund or cancel it — I can't do it from here. To ask for a refund: open reportaproblem.apple.com, sign in, choose \"Request a refund\" and pick PawChamp. To cancel: Settings → your name → Subscriptions → PawChamp → Cancel Subscription.",
+    "at": "2026-10-31T10:00:06Z",
+    "model": "gpt-5"
+  },
+  "classification": {
+    "intents": [
+      "refund",
+      "cancel"
+    ],
+    "true_goal": "stop paying for the App Store subscription and get this week's $9.99 back",
+    "email": null,
+    "chargeback_threat": false,
+    "injection_suspected": false,
+    "wants_human": false,
+    "sentiment": "calm"
+  },
+  "actions": [],
+  "verdicts": [
+    {
+      "hook": "before_action",
+      "decision": "BLOCK",
+      "rule": "store_purchase",
+      "reason": "Bought in the App Store: only Apple can refund it.",
+      "action": {
+        "tool": "refund_payment",
+        "subscription_id": null,
+        "payment_id": "pay_alex_2",
+        "amount": 9.99,
+        "policy_clause": "Terms §6.5",
+        "reason": "Customer asked for this week's refund."
+      },
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:03Z"
+    },
+    {
+      "hook": "before_action",
+      "decision": "BLOCK",
+      "rule": "store_purchase",
+      "reason": "Bought in the App Store: only Apple can cancel it.",
+      "action": {
+        "tool": "cancel_subscription",
+        "subscription_id": "sub_alex",
+        "payment_id": null,
+        "amount": null,
+        "policy_clause": "Membership Policy: cancellation",
+        "reason": "Customer asked to cancel."
+      },
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:03Z"
+    },
+    {
+      "hook": "before_reply",
+      "decision": "PASS",
+      "rule": "ok",
+      "reason": "No action claimed; instructions only.",
+      "action": null,
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:06Z"
+    }
+  ],
+  "rejected_drafts": [],
+  "pending_action": null,
+  "model": "gpt-5"
+}

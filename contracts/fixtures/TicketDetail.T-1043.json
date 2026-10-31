@@ -1,0 +1,194 @@
+{
+  "id": "T-1043",
+  "status": "awaiting_human",
+  "customer": {
+    "id": "cus_john",
+    "email": "john.d@example.com",
+    "name": "John D.",
+    "country": "US",
+    "region": "US",
+    "subscription": {
+      "id": "sub_john",
+      "plan": "monthly",
+      "price": 38.99,
+      "currency": "USD",
+      "status": "active",
+      "platform": "web",
+      "started_at": "2026-10-04T15:00:00Z",
+      "current_period_end": "2026-11-11T15:00:00Z"
+    },
+    "payments": [
+      {
+        "id": "pay_john_trial",
+        "amount": 0.99,
+        "currency": "USD",
+        "charged_at": "2026-10-04T15:00:00Z",
+        "description": "7-day trial",
+        "refunded_amount": 0.0
+      },
+      {
+        "id": "pay_john_1",
+        "amount": 38.99,
+        "currency": "USD",
+        "charged_at": "2026-10-11T15:00:00Z",
+        "description": "Monthly membership",
+        "refunded_amount": 0.0
+      }
+    ]
+  },
+  "classification": {
+    "intents": [
+      "refund"
+    ],
+    "true_goal": "get the $38.99 back for a month he barely used",
+    "email": null,
+    "chargeback_threat": false,
+    "injection_suspected": false,
+    "wants_human": false,
+    "sentiment": "upset"
+  },
+  "messages": [
+    {
+      "id": "m1",
+      "role": "customer",
+      "text": "I was charged $38.99 on Oct 11 for PawChamp. I barely used it. Please refund me.",
+      "at": "2026-10-31T10:00:00Z",
+      "model": null
+    },
+    {
+      "id": "m2",
+      "role": "yurko",
+      "text": "Your subscription is cancelled, so you won't be charged again. Refunds for website purchases are reviewed case by case, so I've passed your request to a colleague. You'll hear back here shortly.",
+      "at": "2026-10-31T10:00:08Z",
+      "model": "gpt-5"
+    }
+  ],
+  "receipts": [
+    {
+      "id": "rcp_1043_cancel",
+      "ticket_id": "T-1043",
+      "action": "cancel_subscription",
+      "target_id": "sub_john",
+      "amount": null,
+      "currency": null,
+      "idempotency_key": "T-1043:cancel_subscription:sub_john",
+      "status": "confirmed",
+      "billing_ref": null,
+      "created_at": "2026-10-31T10:00:04Z",
+      "updated_at": "2026-10-31T10:00:05Z",
+      "evidence": [
+        "evt_cancel_1043",
+        "read-back: canceled"
+      ],
+      "failure_reason": null
+    }
+  ],
+  "verdicts": [
+    {
+      "hook": "before_action",
+      "decision": "PASS",
+      "rule": "ok",
+      "reason": "Stop further charges; web subscription is active.",
+      "action": {
+        "tool": "cancel_subscription",
+        "subscription_id": "sub_john",
+        "payment_id": null,
+        "amount": null,
+        "policy_clause": "Membership Policy: cancellation",
+        "reason": "Stop further charges while the refund is reviewed."
+      },
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:03Z"
+    },
+    {
+      "hook": "before_action",
+      "decision": "ESCALATE",
+      "rule": "outside_policy",
+      "reason": "US customer, 20 days since the charge: web purchases are generally non-refundable; a human decides.",
+      "action": {
+        "tool": "refund_payment",
+        "subscription_id": null,
+        "payment_id": "pay_john_1",
+        "amount": 38.99,
+        "policy_clause": "Membership Policy: refunds at our discretion",
+        "reason": "US customer, 20 days since the charge; asks for a full refund."
+      },
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:03Z"
+    },
+    {
+      "hook": "after_action",
+      "decision": "PASS",
+      "rule": "webhook_confirmed",
+      "reason": "subscription.canceled received and read-back agrees.",
+      "action": null,
+      "receipt_id": "rcp_1043_cancel",
+      "claims": [],
+      "at": "2026-10-31T10:00:05Z"
+    },
+    {
+      "hook": "before_reply",
+      "decision": "PASS",
+      "rule": "ok",
+      "reason": "Cancel claim matches a confirmed receipt; no refund claimed.",
+      "action": null,
+      "receipt_id": null,
+      "claims": [
+        {
+          "text": "Your subscription is cancelled",
+          "kind": "canceled",
+          "promised_days": null,
+          "receipt_id": "rcp_1043_cancel",
+          "ok": true,
+          "problem": null
+        }
+      ],
+      "at": "2026-10-31T10:00:08Z"
+    }
+  ],
+  "rejected_drafts": [],
+  "pending_action": {
+    "tool": "refund_payment",
+    "subscription_id": null,
+    "payment_id": "pay_john_1",
+    "amount": 38.99,
+    "policy_clause": "Membership Policy: refunds at our discretion",
+    "reason": "US customer, 20 days since the charge; asks for a full refund."
+  },
+  "events": [
+    {
+      "id": "e15",
+      "at": "2026-10-31T10:05:00Z",
+      "ticket_id": "T-1043",
+      "type": "ticket.opened",
+      "data": {}
+    },
+    {
+      "id": "e16",
+      "at": "2026-10-31T10:05:03Z",
+      "ticket_id": "T-1043",
+      "type": "hook.verdict",
+      "data": {
+        "hook": "before_action",
+        "decision": "ESCALATE",
+        "rule": "outside_policy"
+      }
+    },
+    {
+      "id": "e17",
+      "at": "2026-10-31T10:05:04Z",
+      "ticket_id": "T-1043",
+      "type": "handed_to_human",
+      "data": {}
+    },
+    {
+      "id": "e18",
+      "at": "2026-10-31T10:05:12Z",
+      "ticket_id": "T-1043",
+      "type": "reply.sent",
+      "data": {}
+    }
+  ]
+}

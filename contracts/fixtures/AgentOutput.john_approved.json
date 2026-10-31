@@ -1,0 +1,61 @@
+{
+  "ticket_id": "T-1043",
+  "status": "waiting_billing",
+  "reply": {
+    "id": "m4",
+    "role": "yurko",
+    "text": "A colleague approved your refund of $38.99. It's being processed and can take up to 15 business days to reach your card.",
+    "at": "2026-10-31T10:01:01Z",
+    "model": "gpt-5"
+  },
+  "classification": null,
+  "actions": [
+    {
+      "id": "rcp_1043_refund",
+      "ticket_id": "T-1043",
+      "action": "refund_payment",
+      "target_id": "pay_john_1",
+      "amount": 38.99,
+      "currency": "USD",
+      "idempotency_key": "T-1043:refund_payment:pay_john_1",
+      "status": "pending",
+      "billing_ref": "re_1043",
+      "created_at": "2026-10-31T10:00:04Z",
+      "updated_at": "2026-10-31T10:01:00Z",
+      "evidence": [],
+      "failure_reason": null
+    }
+  ],
+  "verdicts": [
+    {
+      "hook": "before_reply",
+      "decision": "PASS",
+      "rule": "ok",
+      "reason": "Refund described as processing; timing within policy.",
+      "action": null,
+      "receipt_id": null,
+      "claims": [
+        {
+          "text": "approved your refund of $38.99. It's being processed",
+          "kind": "refund_submitted",
+          "promised_days": null,
+          "receipt_id": "rcp_1043_refund",
+          "ok": true,
+          "problem": null
+        },
+        {
+          "text": "up to 15 business days",
+          "kind": "timing",
+          "promised_days": 15,
+          "receipt_id": null,
+          "ok": true,
+          "problem": null
+        }
+      ],
+      "at": "2026-10-31T10:01:01Z"
+    }
+  ],
+  "rejected_drafts": [],
+  "pending_action": null,
+  "model": "gpt-5"
+}

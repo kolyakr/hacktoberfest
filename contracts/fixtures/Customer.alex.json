@@ -1,0 +1,35 @@
+{
+  "id": "cus_alex",
+  "email": "alex.p@example.com",
+  "name": "Alex P.",
+  "country": "US",
+  "region": "US",
+  "subscription": {
+    "id": "sub_alex",
+    "plan": "weekly",
+    "price": 9.99,
+    "currency": "USD",
+    "status": "active",
+    "platform": "app_store",
+    "started_at": "2026-10-15T12:00:00Z",
+    "current_period_end": "2026-11-05T12:00:00Z"
+  },
+  "payments": [
+    {
+      "id": "pay_alex_1",
+      "amount": 9.99,
+      "currency": "USD",
+      "charged_at": "2026-10-22T12:00:00Z",
+      "description": "Weekly Premium (App Store)",
+      "refunded_amount": 0.0
+    },
+    {
+      "id": "pay_alex_2",
+      "amount": 9.99,
+      "currency": "USD",
+      "charged_at": "2026-10-29T12:00:00Z",
+      "description": "Weekly Premium (App Store)",
+      "refunded_amount": 0.0
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "rcp_1042_refund",
+  "ticket_id": "T-1042",
+  "action": "refund_payment",
+  "target_id": "pay_marta_1",
+  "amount": 38.99,
+  "currency": "EUR",
+  "idempotency_key": "T-1042:refund_payment:pay_marta_1",
+  "status": "confirmed",
+  "billing_ref": "re_1042",
+  "created_at": "2026-10-31T10:00:04Z",
+  "updated_at": "2026-10-31T10:00:20Z",
+  "evidence": [
+    "evt_refund_1042",
+    "read-back: succeeded"
+  ],
+  "failure_reason": null
+}

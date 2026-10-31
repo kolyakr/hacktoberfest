@@ -1,0 +1,150 @@
+{
+  "id": "T-1044",
+  "status": "resolved",
+  "customer": {
+    "id": "cus_alex",
+    "email": "alex.p@example.com",
+    "name": "Alex P.",
+    "country": "US",
+    "region": "US",
+    "subscription": {
+      "id": "sub_alex",
+      "plan": "weekly",
+      "price": 9.99,
+      "currency": "USD",
+      "status": "active",
+      "platform": "app_store",
+      "started_at": "2026-10-15T12:00:00Z",
+      "current_period_end": "2026-11-05T12:00:00Z"
+    },
+    "payments": [
+      {
+        "id": "pay_alex_1",
+        "amount": 9.99,
+        "currency": "USD",
+        "charged_at": "2026-10-22T12:00:00Z",
+        "description": "Weekly Premium (App Store)",
+        "refunded_amount": 0.0
+      },
+      {
+        "id": "pay_alex_2",
+        "amount": 9.99,
+        "currency": "USD",
+        "charged_at": "2026-10-29T12:00:00Z",
+        "description": "Weekly Premium (App Store)",
+        "refunded_amount": 0.0
+      }
+    ]
+  },
+  "classification": {
+    "intents": [
+      "refund",
+      "cancel"
+    ],
+    "true_goal": "stop paying for the App Store subscription and get this week's $9.99 back",
+    "email": null,
+    "chargeback_threat": false,
+    "injection_suspected": false,
+    "wants_human": false,
+    "sentiment": "calm"
+  },
+  "messages": [
+    {
+      "id": "m1",
+      "role": "customer",
+      "text": "I subscribed on my iPhone and want a refund for this week's $9.99. Also cancel it please.",
+      "at": "2026-10-31T10:00:00Z",
+      "model": null
+    },
+    {
+      "id": "m2",
+      "role": "yurko",
+      "text": "You bought PawChamp through the App Store, so only Apple can refund or cancel it — I can't do it from here. To ask for a refund: open reportaproblem.apple.com, sign in, choose \"Request a refund\" and pick PawChamp. To cancel: Settings → your name → Subscriptions → PawChamp → Cancel Subscription.",
+      "at": "2026-10-31T10:00:06Z",
+      "model": "gpt-5"
+    }
+  ],
+  "receipts": [],
+  "verdicts": [
+    {
+      "hook": "before_action",
+      "decision": "BLOCK",
+      "rule": "store_purchase",
+      "reason": "Bought in the App Store: only Apple can refund it.",
+      "action": {
+        "tool": "refund_payment",
+        "subscription_id": null,
+        "payment_id": "pay_alex_2",
+        "amount": 9.99,
+        "policy_clause": "Terms §6.5",
+        "reason": "Customer asked for this week's refund."
+      },
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:03Z"
+    },
+    {
+      "hook": "before_action",
+      "decision": "BLOCK",
+      "rule": "store_purchase",
+      "reason": "Bought in the App Store: only Apple can cancel it.",
+      "action": {
+        "tool": "cancel_subscription",
+        "subscription_id": "sub_alex",
+        "payment_id": null,
+        "amount": null,
+        "policy_clause": "Membership Policy: cancellation",
+        "reason": "Customer asked to cancel."
+      },
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:03Z"
+    },
+    {
+      "hook": "before_reply",
+      "decision": "PASS",
+      "rule": "ok",
+      "reason": "No action claimed; instructions only.",
+      "action": null,
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:06Z"
+    }
+  ],
+  "rejected_drafts": [],
+  "pending_action": null,
+  "events": [
+    {
+      "id": "e23",
+      "at": "2026-10-31T10:10:00Z",
+      "ticket_id": "T-1044",
+      "type": "ticket.opened",
+      "data": {}
+    },
+    {
+      "id": "e24",
+      "at": "2026-10-31T10:10:03Z",
+      "ticket_id": "T-1044",
+      "type": "hook.verdict",
+      "data": {
+        "hook": "before_action",
+        "decision": "BLOCK",
+        "rule": "store_purchase"
+      }
+    },
+    {
+      "id": "e25",
+      "at": "2026-10-31T10:10:06Z",
+      "ticket_id": "T-1044",
+      "type": "reply.sent",
+      "data": {}
+    },
+    {
+      "id": "e26",
+      "at": "2026-10-31T10:10:30Z",
+      "ticket_id": "T-1044",
+      "type": "ticket.resolved",
+      "data": {}
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "rcp_1042_refund",
+  "ticket_id": "T-1042",
+  "action": "refund_payment",
+  "target_id": "pay_marta_1",
+  "amount": 38.99,
+  "currency": "EUR",
+  "idempotency_key": "T-1042:refund_payment:pay_marta_1",
+  "status": "failed",
+  "billing_ref": "re_1042",
+  "created_at": "2026-10-31T10:00:04Z",
+  "updated_at": "2026-10-31T10:00:20Z",
+  "evidence": [
+    "evt_refund_fail_1042"
+  ],
+  "failure_reason": "card_expired"
+}

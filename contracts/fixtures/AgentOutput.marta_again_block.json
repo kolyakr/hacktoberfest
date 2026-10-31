@@ -1,0 +1,55 @@
+{
+  "ticket_id": "T-1045",
+  "status": "resolved",
+  "reply": {
+    "id": "m2",
+    "role": "yurko",
+    "text": "Your refund of €38.99 was confirmed by the bank on Oct 31; a payment can only be refunded once. Banks can take up to 15 business days to show it on your statement.",
+    "at": "2026-10-31T10:00:05Z",
+    "model": "gpt-5"
+  },
+  "classification": {
+    "intents": [
+      "refund"
+    ],
+    "true_goal": "get the same €38.99 refunded again",
+    "email": null,
+    "chargeback_threat": false,
+    "injection_suspected": false,
+    "wants_human": false,
+    "sentiment": "upset"
+  },
+  "actions": [],
+  "verdicts": [
+    {
+      "hook": "before_action",
+      "decision": "BLOCK",
+      "rule": "already_refunded",
+      "reason": "pay_marta_1 was already refunded (Terms §6.6).",
+      "action": {
+        "tool": "refund_payment",
+        "subscription_id": null,
+        "payment_id": "pay_marta_1",
+        "amount": 38.99,
+        "policy_clause": "Terms §6.5.1",
+        "reason": "Customer asks for the refund again."
+      },
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:03Z"
+    },
+    {
+      "hook": "before_reply",
+      "decision": "PASS",
+      "rule": "ok",
+      "reason": "Claims match the confirmed receipt; timing within policy.",
+      "action": null,
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:05Z"
+    }
+  ],
+  "rejected_drafts": [],
+  "pending_action": null,
+  "model": "gpt-5"
+}

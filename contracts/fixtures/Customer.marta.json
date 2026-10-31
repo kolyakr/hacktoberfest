@@ -1,0 +1,35 @@
+{
+  "id": "cus_marta",
+  "email": "marta.k@example.com",
+  "name": "Marta K.",
+  "country": "DE",
+  "region": "EU",
+  "subscription": {
+    "id": "sub_marta",
+    "plan": "monthly",
+    "price": 38.99,
+    "currency": "EUR",
+    "status": "active",
+    "platform": "web",
+    "started_at": "2026-10-20T09:00:00Z",
+    "current_period_end": "2026-11-27T09:00:00Z"
+  },
+  "payments": [
+    {
+      "id": "pay_marta_trial",
+      "amount": 0.99,
+      "currency": "EUR",
+      "charged_at": "2026-10-20T09:00:00Z",
+      "description": "7-day trial",
+      "refunded_amount": 0.0
+    },
+    {
+      "id": "pay_marta_1",
+      "amount": 38.99,
+      "currency": "EUR",
+      "charged_at": "2026-10-27T09:00:00Z",
+      "description": "Monthly membership",
+      "refunded_amount": 0.0
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "event_id": "evt_cancel_1042",
+  "type": "subscription.canceled",
+  "object_id": "sub_marta",
+  "idempotency_key": "T-1042:cancel_subscription:sub_marta",
+  "created_at": "2026-10-31T10:00:05Z"
+}

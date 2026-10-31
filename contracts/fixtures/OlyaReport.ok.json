@@ -1,0 +1,16 @@
+{
+  "tickets_total": 4,
+  "resolved_without_human": 3,
+  "resolved_without_human_pct": 75.0,
+  "avg_first_response_s": 8.0,
+  "zavuch_caught": 3,
+  "false_done_caught": 1,
+  "escalated": 1,
+  "refunded_by_currency": {
+    "EUR": 38.99,
+    "USD": 38.99
+  },
+  "top_reason": "Customers did not know the trial turns into a paid monthly membership (2 of 4 tickets).",
+  "recommendation": "Email a reminder 24 hours before the trial ends; the policy does not promise one today (§6.7).",
+  "model": "gpt-5"
+}

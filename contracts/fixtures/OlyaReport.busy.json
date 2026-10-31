@@ -1,0 +1,16 @@
+{
+  "tickets_total": 200,
+  "resolved_without_human": 164,
+  "resolved_without_human_pct": 82.0,
+  "avg_first_response_s": 11.0,
+  "zavuch_caught": 14,
+  "false_done_caught": 9,
+  "escalated": 36,
+  "refunded_by_currency": {
+    "EUR": 1247.68,
+    "USD": 896.77
+  },
+  "top_reason": "41% of tickets: 'I didn't know it was a subscription', 68% of them within 3 days of the trial converting.",
+  "recommendation": "Send a reminder 24 hours before the trial ends, and show the renewal price on the checkout button.",
+  "model": "gpt-5"
+}

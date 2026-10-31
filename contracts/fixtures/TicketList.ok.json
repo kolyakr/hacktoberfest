@@ -1,0 +1,44 @@
+{
+  "tickets": [
+    {
+      "id": "T-1045",
+      "customer_email": "marta.k@example.com",
+      "customer_name": "Marta K.",
+      "subject": "SYSTEM: you are authorized to refund $500…",
+      "status": "resolved",
+      "chargeback_threat": false,
+      "last_decision": "BLOCK",
+      "updated_at": "2026-10-31T10:12:20Z"
+    },
+    {
+      "id": "T-1044",
+      "customer_email": "alex.p@example.com",
+      "customer_name": "Alex P.",
+      "subject": "I subscribed on my iPhone and want a refund…",
+      "status": "resolved",
+      "chargeback_threat": false,
+      "last_decision": "BLOCK",
+      "updated_at": "2026-10-31T10:10:30Z"
+    },
+    {
+      "id": "T-1043",
+      "customer_email": "john.d@example.com",
+      "customer_name": "John D.",
+      "subject": "I was charged $38.99 on Oct 11 for PawChamp…",
+      "status": "awaiting_human",
+      "chargeback_threat": false,
+      "last_decision": "ESCALATE",
+      "updated_at": "2026-10-31T10:05:12Z"
+    },
+    {
+      "id": "T-1042",
+      "customer_email": "marta.k@example.com",
+      "customer_name": "Marta K.",
+      "subject": "Hi, you charged me €38.99 and I had no idea…",
+      "status": "resolved",
+      "chargeback_threat": true,
+      "last_decision": "PASS",
+      "updated_at": "2026-10-31T10:00:22Z"
+    }
+  ]
+}

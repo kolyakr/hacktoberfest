@@ -1,0 +1,38 @@
+{
+  "ticket_id": "T-1047",
+  "status": "open",
+  "reply": {
+    "id": "m2",
+    "role": "yurko",
+    "text": "I can't find a membership for unknown@example.com. Which email did you use when you bought PawChamp?",
+    "at": "2026-10-31T10:00:04Z",
+    "model": "gpt-5"
+  },
+  "classification": {
+    "intents": [
+      "cancel"
+    ],
+    "true_goal": "stop the subscription",
+    "email": null,
+    "chargeback_threat": false,
+    "injection_suspected": false,
+    "wants_human": false,
+    "sentiment": "calm"
+  },
+  "actions": [],
+  "verdicts": [
+    {
+      "hook": "before_reply",
+      "decision": "PASS",
+      "rule": "ok",
+      "reason": "No action claimed.",
+      "action": null,
+      "receipt_id": null,
+      "claims": [],
+      "at": "2026-10-31T10:00:04Z"
+    }
+  ],
+  "rejected_drafts": [],
+  "pending_action": null,
+  "model": "gpt-5"
+}
