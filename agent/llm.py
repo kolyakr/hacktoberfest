@@ -44,12 +44,13 @@ def _messages(system: str, user: str) -> list[dict[str, str]]:
 
 
 def _opts(model: str) -> dict:
-    """gpt-5 / o-series take a reasoning effort; low keeps a support reply at seconds, not a minute.
-    Other models (and the non-reasoning *-chat-* ones) reject the parameter, so they get nothing."""
-    effort = os.getenv("OPENAI_REASONING_EFFORT", "low")
-    if not effort or "chat" in model or not re.match(r"^(gpt-5|o\d)", model):
+    """gpt-5 / o-series take a reasoning effort: "minimal" for the fast model's routing and checks, "low"
+    for the final text (OPENAI_REASONING_EFFORT overrides both). Other models, and the non-reasoning
+    *-chat-* ones, reject the parameter, so they get nothing."""
+    if "chat" in model or not re.match(r"^(gpt-5|o\d)", model):
         return {}
-    return {"reasoning": {"effort": effort}}
+    default = "minimal" if model == FAST and model.startswith("gpt-5") else "low"  # o-series has no "minimal"
+    return {"reasoning": {"effort": os.getenv("OPENAI_REASONING_EFFORT") or default}}
 
 
 def _where(e: ValueError) -> str:
