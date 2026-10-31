@@ -44,7 +44,7 @@ uv run pytest -q                                           # зелене; тв�
 - Квитанції: 🟡 pending, 🟢 confirmed, 🔴 failed. Відхилені чернетки — закресленим текстом із причиною від Завуча.
 
 **Tasks:**
-- [ ] web-1: чат клієнта. Files: `web/src/…`. Uses: `ChatRequest`, `AgentOutput`. Done when: з `make mock-api` повідомлення Marta показує відповідь Юрка; `?mock=alex_block` показує інструкцію Apple.
+- [x] web-1: чат клієнта. Files: `web/src/…`. Uses: `ChatRequest`, `AgentOutput`. Done when: з `make mock-api` повідомлення Marta показує відповідь Юрка; `?mock=alex_block` показує інструкцію Apple.
 - [ ] web-2: консоль підтримки. Uses: `TicketList`, `TicketDetail`, `HumanDecision`. Done when: `T-1042` показує 2 квитанції, 7 вердиктів і закреслену чернетку; `T-1043` показує кнопки «Дозволити / Відмовити».
 - [ ] web-3: дашборд Олі. Uses: `OlyaReport`. Done when: `?mock=busy` показує 4 цифри + висновок, `?mock=empty` показує порожній стан.
 - [ ] web-4: на справжньому API (`:8000`) чат опитує `GET /api/tickets/{id}` кожні 2 с. Done when: у демо-кроці 2 рефанд стає 🟢 без перезавантаження.

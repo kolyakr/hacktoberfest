@@ -21,18 +21,6 @@ export const brand = {
   assistant: 'Yurko',
 }
 
-// Demo customer and billing data shown in the chat.
-export const demo = {
-  complaint: "I was charged $39.99 and I never agreed to it. Refund it now or I'm calling my bank.",
-  maskedEmail: 'e••••@gmail.com',
-  convertedOn: 'Oct 28',
-  amount: '$39.99',
-  card: '••4417',
-  refundRef: 're_3QfL7',
-  pauseRef: 'sub_8Kd2P',
-  pausedUntil: 'Dec 1',
-}
-
 export const cssVars: Record<string, string> = {
   '--ink': brand.colors.ink,
   '--muted': brand.colors.muted,

@@ -65,3 +65,7 @@ footer{margin-top:56px;border-top:1px solid #ececec;padding:24px 0 40px;color:va
 .composer button{width:46px;height:46px;border:0;border-radius:50%;background:var(--grad);display:grid;place-items:center}
 .next{align-self:center;min-height:42px;padding:0 18px;border:1.5px dashed var(--pink);border-radius:99px;background:#fff;color:var(--red);font-weight:800;font-size:14px}
 @media (max-width:860px){.cats,.arts{grid-template-columns:1fr}.band{grid-template-columns:1fr}.band img{max-width:300px;margin:0 auto}.chat{right:8px;left:8px;width:auto}header.top .title{display:none}}
+.composer{flex-wrap:wrap}.composer .email{flex-basis:100%;height:38px;font-size:14px}
+.model{font-size:11px;color:var(--muted);margin-top:4px}
+.pill.err{color:#a1160f;background:#ffe0e0}
+.composer button:disabled{opacity:.5}

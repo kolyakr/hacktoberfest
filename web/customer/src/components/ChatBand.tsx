@@ -6,7 +6,7 @@ export function ChatBand({ onChat }: { onChat: () => void }) {
       <div className="txt">
         <div className="eyebrow">No forms. No waiting.</div>
         <h2>Sort it out in chat<br />in under 2 minutes</h2>
-        <p>{brand.assistant} doesn't just explain — he acts. A safety check verifies every refund, cancel or pause, and you only hear “done” after billing confirms it.</p>
+        <p>{brand.assistant} doesn't just explain — he acts. A safety check verifies every refund or cancel, and you only hear “done” after billing confirms it.</p>
         <div className="steps">
           <span><b>1</b>Tell us what happened</span>
           <span><b>2</b>Pick an option</span>

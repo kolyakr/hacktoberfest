@@ -5,11 +5,10 @@ import { Hero } from './components/Hero.tsx'
 import { Categories } from './components/Categories.tsx'
 import { ChatBand } from './components/ChatBand.tsx'
 import { ChatWidget } from './components/ChatWidget.tsx'
-import { initialChat, type ChatState } from './chat.ts'
 
 export default function App() {
-  const [open, setOpen] = useState(false)
-  const [chat, setChat] = useState<ChatState>(initialChat)
+  // `?mock=<case>` opens the chat straight away, for the demo.
+  const [open, setOpen] = useState(new URLSearchParams(window.location.search).has('mock'))
   const openChat = () => setOpen(true)
 
   return (
@@ -23,7 +22,7 @@ export default function App() {
           <p>Welcome to the {brand.name} Help Center — find help with your subscription, billing, cancellations, refunds, and our Money-Back Guarantee. Browse the sections below or use the search bar.</p>
           <p>
             Want it sorted right now?{' '}
-            <a href="#" onClick={(e) => { e.preventDefault(); openChat() }}>{brand.assistant}, our AI assistant</a>, can refund, cancel or pause your plan in chat — every action is checked before it happens.
+            <a href="#" onClick={(e) => { e.preventDefault(); openChat() }}>{brand.assistant}, our AI assistant</a>, can cancel your plan or refund a charge in chat — every action is checked before it happens.
           </p>
         </section>
 
@@ -32,7 +31,7 @@ export default function App() {
 
         <footer>
           <span>© {brand.name} · Hackathon demo, not the live Help Center</span>
-          <span>Powered by Countersign · Gemma 4</span>
+          <span>Powered by Countersign · OpenAI</span>
         </footer>
       </main>
 
@@ -40,7 +39,7 @@ export default function App() {
         <img src={brand.mascot} alt="" />Need help?
       </button>
 
-      <ChatWidget open={open} state={chat} onChange={setChat} onRestart={() => setChat(initialChat)} />
+      <ChatWidget open={open} />
     </>
   )
 }
