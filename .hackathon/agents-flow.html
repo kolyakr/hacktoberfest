@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8"><title>Юрко, Завуч, Оля: як співпрацюють агенти</title>
+<style>
+body{margin:0;padding:32px 40px;background:#F5F3EE;color:#1B2132;font-family:'IBM Plex Sans',Arial,sans-serif}
+h1{font-size:28px;margin:0 0 12px}
+.legend{margin:0 0 20px} .legend span{display:inline-block;padding:4px 12px;margin:0 8px 8px 0;border-radius:6px;border:1px solid;font-size:15px}
+.mermaid{background:#FFFDF9;border:1px solid #E2DED5;border-radius:12px;padding:24px}
+</style></head><body>
+<h1>Юрко, Завуч, Оля: AI-підтримка підписок PawChamp</h1>
+<p class="legend"><span style="background:#FFE4DC;border-color:#C2412D">Юрко: основний агент</span><span style="background:#ECE3FA;border-color:#6B46C1">Завуч: хуки перевірки</span><span style="background:#DDF3E4;border-color:#2F855A">Оля: аналітик</span><span style="background:#E6ECF5;border-color:#13182A">Дані й системи</span><span style="background:#FFF5D6;border-color:#B7791F">Люди</span></p>
+<pre class="mermaid">
+flowchart LR
+  subgraph IN[&quot;Дані на вході&quot;]
+    U([&quot;Клієнт&lt;br/&gt;чат · email&quot;])
+    ACC[(&quot;Акаунт · підписка · платежі&lt;br/&gt;білінг API&quot;)]
+    KB[(&quot;Політика PawChamp&lt;br/&gt;+ статті help center&quot;)]
+  end
+
+  subgraph Y[&quot;Юрко: основний агент&quot;]
+    YR[&quot;Говорить з клієнтом&lt;br/&gt;розуміє справжню мету&lt;br/&gt;вирішує: рефанд, скасування, пауза?&quot;]
+    TOOLS[&quot;Тули&lt;br/&gt;get_customer · get_payments · search_kb&lt;br/&gt;refund · cancel · pause&quot;]
+  end
+
+  subgraph Z[&quot;Завуч: перевіряє ключові дії&quot;]
+    H1{&quot;Хук 1 · перед дією&lt;br/&gt;правильно зрозумів задачу?&lt;br/&gt;дія за політикою?&quot;}
+    H2{&quot;Хук 2 · після дії&lt;br/&gt;рефанд справді пройшов?&lt;br/&gt;вебхук + read-back&quot;}
+    H3{&quot;Хук 3 · перед відповіддю&lt;br/&gt;кожна заява має квитанцію?&quot;}
+  end
+
+  BILL[&quot;Білінг&lt;br/&gt;fake Solidgate або Stripe test&quot;]
+  HUM[&quot;Людина-агент&lt;br/&gt;апрув · ескалація&quot;]
+  SEND([&quot;Відповідь клієнту&quot;])
+  LOG[(&quot;Журнал подій · SQLite&lt;br/&gt;тікети · дії · квитанції · вердикти&quot;)]
+
+  subgraph O[&quot;Оля: аналітик&quot;]
+    OK[&quot;KPI в коді&lt;br/&gt;FRT · час вирішення · Refund Rate&lt;br/&gt;CSAT · % блоків Завуча&quot;]
+    OI[&quot;Gemma: причини звернень&lt;br/&gt;рекомендації · алерти&quot;]
+  end
+  DASH([&quot;Дашборд тімліда&quot;])
+
+  U --&gt; YR
+  ACC --&gt; TOOLS
+  KB --&gt; TOOLS
+  YR &lt;--&gt; TOOLS
+  TOOLS --&gt;|&quot;refund / cancel / pause&quot;| H1
+  H1 --&gt;|&quot;ок&quot;| BILL
+  H1 --&gt;|&quot;сумнів · гроші&quot;| HUM
+  HUM --&gt;|&quot;апрув&quot;| BILL
+  H1 --&gt;|&quot;ні: пояснити клієнту&quot;| YR
+  BILL --&gt;|&quot;вебхук&quot;| H2
+  H2 --&gt;|&quot;квитанція&quot;| YR
+  YR --&gt;|&quot;чернетка&quot;| H3
+  H3 --&gt;|&quot;PASS&quot;| SEND
+  H3 --&gt;|&quot;BLOCK: переписати&quot;| YR
+  H1 &amp; H2 &amp; H3 -.-&gt; LOG
+  YR -.-&gt; LOG
+  LOG --&gt; OK --&gt; OI --&gt; DASH
+
+  classDef yurko fill:#FFE4DC,stroke:#C2412D,color:#1B2132
+  classDef zavuch fill:#ECE3FA,stroke:#6B46C1,color:#1B2132
+  classDef olya fill:#DDF3E4,stroke:#2F855A,color:#1B2132
+  classDef data fill:#E6ECF5,stroke:#13182A,color:#1B2132
+  classDef human fill:#FFF5D6,stroke:#B7791F,color:#1B2132
+  class YR,TOOLS yurko
+  class H1,H2,H3 zavuch
+  class OK,OI,DASH olya
+  class ACC,KB,LOG,BILL data
+  class U,HUM,SEND human
+</pre>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({startOnLoad:true, theme:'base', flowchart:{curve:'basis'}});
+</script>
+</body></html>

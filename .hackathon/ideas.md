@@ -71,7 +71,36 @@ Sources: `research/1-users.md` … `research/6-pawchamp.md`. Ranking criteria: f
 
 ---
 
-## Top 3 (after research round 1; round 2 checks running)
+## Final ranking after round 2 (research/idea-1.md, idea-2.md, idea-3.md)
+
+What round 2 changed:
+- **Approvals, eligibility checks and 100% QA with suggested fixes are table stakes.** Fin Procedures checks refund eligibility and has "Loop in teammate"; Lorikeet keeps eligibility in code and has Coach (100% rubric QA → fixes with approval, Jan 2026). Show them, don't sell them as new.
+- **The open gap is proof of execution before the reply goes out.** No Fin or Lorikeet page describes locking the customer reply until billing confirms, matching the commitments in a drafted reply to the action log, or QA that scores "promise kept". Uniphore and Guesty track promises *after* the conversation as reminders. 45–48% of tau2 agent failures are "false successes", and LLM judges catch them poorly (≤0.65 AUROC, arXiv 2606.09863), so verify against system state and not against the transcript.
+- **No product publishes a refund matrix** (all say case-by-case). Refund amounts are a configurable "desk policy (demo values)". The real rules are diagnosis, side effects and hard blocks from the Liven/RiseGuide/PawChamp help pages.
+- **2026 user quotes match the gap.** Liven iOS: "told I would not be charged anymore. The charges have continued". Priceline's AI "Penny" promised a refund that never happened.
+
+### Pick candidate: **"Receipts": a support copilot that can't claim what it didn't do** (#3 re-centred on #9, plus #1's policy packs)
+1. **Understand:** Gemma 26B extracts intent, true goal, chargeback risk and platform (web vs App Store) from the ticket.
+2. **Diagnose + propose:** per-product policy pack (PawChamp + RiseGuide/Liven) → Gemma 31B proposes actions with the article/clause cited. Same words "charged twice" → different correct action per product.
+3. **Decide in code:** policy engine (time windows EU 14d/BR 7d, usage conditions, store-billed → redirect, no refund during an open dispute, goodwill cap). Prompt injection is blocked here.
+4. **Act + prove:** the agent approves → Solidgate-shaped fake billing / Stripe sandbox runs → "confirmed" = webhook received. One scripted delayed/failed refund.
+5. **Receipts guard:** Gemma extracts claims from the drafted reply (human- or AI-written) → code joins them to the action log → Send stays locked until every claim is green; an honest rewrite is suggested ("your refund is pending").
+6. **Audit:** QA scores each ticket on promise kept + action correct under policy; board "Nate: 3 promises, 0 executed"; cluster "renewed without reminder" → suggestion for product.
+
+### Diia check (research/7-diia.md): not the main scenario
+- Diia support is already 85% AI-answered (ChatGPT + CRM), and Diia.AI (Gemini 2.0 Flash) executes a few services. Most fixes belong to other agencies (ДМС, ДРАЦС, tax), so the "action" becomes "prepare a request to another agency", which is weaker than a confirmed refund. A state brand also carries impersonation risk.
+- Borrow two features into "Receipts": **anti-loop escalation** (same tip given twice → force escalation; Diia users: "По колу" ("in circles")) and **incident clustering** (N similar tickets in T minutes → incident + broadcast draft for approval).
+- Optional stretch: a 60-second fictional "e-gov" policy pack (payment refused after a fee was paid → refund request) to show the engine is not tied to one product. Label it unaffiliated, with no logos.
+
+## Top 3 (after research round 1, before round 2)
 1. **#3 Act + Audit on PawChamp, with Promise Keeper (#9) built in.** Uses PawChamp's real policy (trial auto-convert §6.7, "generally non-refundable" web, EU 14d / BR 7d, App Store → Apple, chargeback §6.6). Demo: an angry UK customer ("didn't know about £38.99 renewal, calling my bank") → intent + chargeback risk → account timeline → policy-cited proposal (cancel now + 50% goodwill, no lifetime upsell) → agent approves → actions execute + verified → reply drafted (send unlocks only after proof) → QA scores the ticket. Covers all 4 challenge points.
 2. **#1 Cross-portfolio Billing Desk Copilot (Liven / RiseGuide policy packs).** The same engine with one policy pack per product. It pitches to SKELAR's shared billing desk, which is hiring now. More breadth, less depth.
 3. **#2 + #9 Policy Auditor / Promise Keeper as a QA product for leads and QC.** Analytics-first: scores 100% of tickets on *action correctness* and *promises kept*, clusters root causes ("renewed without reminder") for product. Safest to build, but weaker on "AI takes actions".
+
+## Decision (31.10): main idea
+- **Business: PawChamp** (SKELAR). Focus: subscription problems (unexpected renewal, cancel, refund, trial converted, add-ons, web vs App Store / Google Play).
+- **Product: a 3-agent support system.** Full design, diagram and demo failures: [agents-flow.md](agents-flow.md).
+  - **Юрко** is the main agent. It talks to the customer, uses tools and decides whether a refund is due.
+  - **Завуч** is the verifier. It checks Юрко through 3 hooks on key actions: before the action (did it understand the task, does policy allow it), after the action (did the refund really go through: webhook + read-back) and before the reply (does every claim have a receipt).
+  - **Оля** is the analyst. She computes KPIs from the event log (FRT, resolution time, Refund Rate, CSAT, Завуч block rate, promise-kept rate) and turns them into insights and alerts.
+- Supersedes the earlier "Receipts" ranking above. Research: research/6-pawchamp.md, 10-action-verification.md, 11-verifier-agent.md.
