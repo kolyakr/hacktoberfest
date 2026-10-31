@@ -59,3 +59,15 @@ def test_same_webhook_twice_is_a_duplicate(client):
 def test_report_and_reset(client):
     OlyaReport.model_validate(client.get("/api/report").json())
     assert DemoReset.model_validate(client.post("/api/demo/reset").json()).customers == 3
+
+
+def test_fake_agent_uses_real_billing_whatever_tools_impl(monkeypatch):
+    """AGENT_IMPL=fake must tell customers apart even when TOOLS_IMPL is unset (fake), as in a fresh .env."""
+    monkeypatch.setenv("AGENT_IMPL", "fake")
+    monkeypatch.setenv("TOOLS_IMPL", "fake")
+    c = TestClient(main.app)
+    c.post("/api/demo/reset")
+    john = c.post("/api/chat", json=load_fixture(ChatRequest, "john").model_dump()).json()
+    assert john["status"] == "awaiting_human"
+    approved = c.post(f"/api/tickets/{john['ticket_id']}/decision", json={"approve": True}).json()
+    assert approved["status"] == "waiting_billing"

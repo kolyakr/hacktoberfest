@@ -1,7 +1,8 @@
 """AGENT_IMPL=fake: Yurko without an LLM. Picks the demo fixture for the message, but performs its actions
-through the real tools, so receipts, webhooks and the console behave as in the real demo."""
+through the real tools, so receipts, webhooks and the console behave as in the real demo.
+It always uses services.REGISTRY: TOOLS_IMPL switches the tools of the real agent only."""
 
-from contracts._kit import load_fixture, registry
+from contracts._kit import load_fixture
 from contracts.agent import AgentInput, AgentOutput, Message, Verdict
 from contracts.tools import (
     ActionReceipt,
@@ -9,6 +10,7 @@ from contracts.tools import (
     FindCustomerArgs,
     RefundPaymentArgs,
 )
+from services import REGISTRY
 
 MODEL = "fake"
 
@@ -25,7 +27,7 @@ def _case(inp: AgentInput) -> str:
     text = inp.messages[-1].text.lower()
     if "system:" in text:
         return "injection_block"
-    found = registry()["find_customer"](FindCustomerArgs(email=inp.customer_email))
+    found = REGISTRY["find_customer"](FindCustomerArgs(email=inp.customer_email))
     if not found.found:
         return "not_found"
     name = found.customer.id.removeprefix("cus_")
@@ -59,7 +61,7 @@ def _from_fixture(inp: AgentInput, case: str) -> AgentOutput:
 
 
 def _perform(ticket_id: str, r: ActionReceipt) -> ActionReceipt:
-    tools = registry()
+    tools = REGISTRY
     if r.action == "cancel_subscription":
         return tools["cancel_subscription"](CancelSubscriptionArgs(ticket_id=ticket_id, subscription_id=r.target_id))
     return tools["refund_payment"](RefundPaymentArgs(ticket_id=ticket_id, payment_id=r.target_id,
@@ -98,7 +100,7 @@ def _human_decision(inp: AgentInput) -> AgentOutput:
             inp, "A colleague reviewed your request: this payment can't be refunded under our policy. "
                  "Your subscription stays cancelled, so you won't be charged again."))
     p = inp.pending_action
-    receipt = registry()["refund_payment"](RefundPaymentArgs(
+    receipt = REGISTRY["refund_payment"](RefundPaymentArgs(
         ticket_id=inp.ticket_id, payment_id=p.payment_id or "", amount=p.amount or 0,
         policy_clause=p.policy_clause))
     out = load_fixture(AgentOutput, "john_approved")
