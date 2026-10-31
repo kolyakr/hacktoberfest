@@ -14,7 +14,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from agent import llm, yurko
+from agent import claims_fallback, llm, yurko
 from contracts._kit import impl, registry
 from contracts.agent import (
     ActionContext,
@@ -71,7 +71,8 @@ def before_action(ctx: ActionContext) -> Verdict:
 def before_reply(draft: str, receipts: list[ActionReceipt], now: datetime) -> Verdict:
     if zavuch_claims is None:
         return missing_zavuch("before_reply", now)
-    return zavuch_claims.judge_claims(zavuch_claims.extract_claims(draft), receipts, now)
+    extract = getattr(zavuch_claims, "extract_claims", claims_fallback.extract_claims)  # zavuch-5 may not be in yet
+    return zavuch_claims.judge_claims(extract(draft), receipts, now)
 
 
 # --- one run ---------------------------------------------------------------------------------------------
@@ -244,6 +245,7 @@ def customer_message(run: Run) -> AgentOutput:
 
 def receipt_update(run: Run) -> AgentOutput:
     """Billing settled something (webhook, via api/). Speak only when the news is final."""
+    run.pending_action = run.inp.pending_action  # a human decision still outstanding stays outstanding
     receipts = run.all_receipts()
     run.receipts = [r for r in receipts if r.status != "pending"]  # what the console should refresh
     if any(r.status == "failed" for r in receipts):
@@ -251,11 +253,11 @@ def receipt_update(run: Run) -> AgentOutput:
                          "will sort it out personally.")
         run.hand_to_human("Billing reported a failed action.")
         return run.reply()
-    if receipts and all(r.status == "confirmed" for r in receipts):
+    if run.pending_action is None and receipts and all(r.status == "confirmed" for r in receipts):
         run.facts.append("Billing has just confirmed the last outstanding action. Tell the customer the "
                          "good news in one or two sentences.")
         return run.reply()
-    return run.output(None)  # something is still pending: nothing new worth a message
+    return run.output(None)  # something is still pending (billing or a human): nothing new worth a message
 
 
 def human_decision(run: Run) -> AgentOutput:

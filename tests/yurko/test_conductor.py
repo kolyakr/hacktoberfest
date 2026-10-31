@@ -113,3 +113,11 @@ def test_receipt_update_speaks_only_when_final():
 
     failed = agent.run(inp(trigger="receipt_update", receipts=[receipt("cancel_confirmed"), receipt("refund_failed")]))
     assert failed.status == "escalated" and failed.reply is not None
+
+
+def test_receipt_update_keeps_a_pending_human_decision():
+    """John: the cancel webhook lands while his refund waits for a human. That must not resolve the ticket."""
+    out = agent.run(inp(trigger="receipt_update", receipts=[receipt("cancel_confirmed")],
+                        pending_action=refund("pay_john_1", 38.99)))
+    assert out.status == "awaiting_human" and out.pending_action == refund("pay_john_1", 38.99)
+    assert out.reply is None
