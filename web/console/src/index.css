@@ -689,3 +689,125 @@ html { background: var(--bg); }
 .frost .was { opacity: 1; text-decoration: none; color: rgb(255 255 255 / .72); }
 .frost .was s { text-decoration-color: rgb(255 255 255 / .6); }
 .chip-fix { font-family: var(--display); font-size: 12px; font-weight: 600; background: rgb(255 255 255 / .9); }
+
+/* Login: the hero's ribbed gradient over the whole screen, a frosted card on top. */
+.login { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; display: grid; grid-template-columns: 1.2fr minmax(340px, 440px); align-items: center; gap: clamp(32px, 6vw, 96px); padding: clamp(24px, 6vw, 88px); color: #fff; place-items: initial; }
+.login-bg { position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(45% 70% at 85% 15%, rgb(216 57 149 / .8), transparent 70%),
+    radial-gradient(50% 70% at 60% 115%, #ffb36b, transparent 70%),
+    radial-gradient(60% 90% at 0% 110%, #034f70, transparent 70%),
+    radial-gradient(70% 80% at 25% -10%, #5fcdf2, transparent 70%),
+    #0583b3; }
+.login-bg::after { content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, rgb(255 255 255 / .16) 0, rgb(255 255 255 / 0) 12px, rgb(0 30 50 / .1) 24px, rgb(255 255 255 / .16) 26px);
+  backdrop-filter: blur(6px); }
+.login-bg i { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .6; animation: drift 20s ease-in-out infinite alternate; }
+.login-bg i:nth-child(1) { width: 42vmax; height: 42vmax; top: -14vmax; right: 4vmax; background: #ff7ac2; }
+.login-bg i:nth-child(2) { width: 36vmax; height: 36vmax; bottom: -16vmax; left: 18vmax; background: #ffc27a; animation-duration: 26s; animation-direction: alternate-reverse; }
+.login-bg i:nth-child(3) { width: 30vmax; height: 30vmax; top: 20%; left: -10vmax; background: #4fd6ff; animation-duration: 30s; }
+.login-pitch h1 { font-family: var(--display); font-size: clamp(48px, 7vw, 104px); font-weight: 300; letter-spacing: -0.045em; line-height: .95; text-shadow: 0 2px 30px rgb(0 40 70 / .25); margin: 0; }
+.login-pitch h1 em { display: block; font-size: 1.06em; }
+.login-pitch p { max-width: 460px; margin: 22px 0 0; font-size: 18px; line-height: 1.5; color: rgb(255 255 255 / .85); }
+.login-chips { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 28px 0 0; }
+.login-chips li { padding: 8px 14px; border-radius: 999px; background: rgb(255 255 255 / .14); border: 1px solid rgb(255 255 255 / .3); backdrop-filter: blur(12px); font-size: 13px; }
+.login-chips b { font-family: var(--mono, monospace); margin-right: 4px; }
+.login-card { width: 100%; padding: 40px 36px; display: flex; flex-direction: column; gap: 16px; border-radius: 28px; color: var(--ink);
+  background: rgb(255 255 255 / .72); border: 1px solid rgb(255 255 255 / .7); backdrop-filter: blur(28px) saturate(1.4); -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  box-shadow: 0 40px 80px -30px rgb(0 40 70 / .55), inset 0 1px 0 rgb(255 255 255 / .9); }
+.login-card h2 { font-family: var(--display); font-size: 40px; font-weight: 300; letter-spacing: -0.035em; margin: 8px 0 0; }
+.login-card h2 em { font-family: var(--serif); font-style: italic; font-weight: 400; }
+.login-card p { margin: -4px 0 6px; line-height: 1.5; color: var(--ink-2); }
+.login-card input { background: rgb(255 255 255 / .65); border-color: rgb(20 40 60 / .12); }
+.login-card .btn { margin-top: 6px; height: 52px; font-size: 16px; border-radius: 999px; }
+.login-card small { text-align: center; color: var(--ink-3, #6b7a86); font-size: 12px; }
+@media (max-width: 860px) { .login { grid-template-columns: 1fr; } .login-pitch p, .login-chips { display: none; } .login-pitch h1 { font-size: 52px; } }
+@media (prefers-reduced-motion: reduce) { .login-bg i { animation: none; } }
+.login > .login-pitch, .login > .login-card { align-self: center; height: auto; }
+.login { align-content: center; }
+/* Login v2: deeper colours, a shade behind the headline, denser glass. */
+.login-bg {
+  background:
+    radial-gradient(40% 60% at 88% 12%, rgb(196 60 150 / .7), transparent 70%),
+    radial-gradient(45% 60% at 62% 118%, rgb(255 170 100 / .75), transparent 70%),
+    radial-gradient(70% 90% at 0% 100%, #022f47, transparent 70%),
+    radial-gradient(60% 70% at 30% -10%, #3fb4e0, transparent 70%),
+    linear-gradient(160deg, #0a6f99, #064a6e); }
+.login-bg::before { content: ''; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(90deg, rgb(2 24 40 / .55) 0%, rgb(2 24 40 / .25) 45%, transparent 70%),
+              radial-gradient(120% 80% at 50% 120%, rgb(2 24 40 / .35), transparent 60%); }
+.login-bg::after { z-index: 2;
+  background: repeating-linear-gradient(90deg, rgb(255 255 255 / .09) 0, rgb(255 255 255 / 0) 9px, rgb(0 20 40 / .12) 18px, rgb(255 255 255 / .09) 19px);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.login-bg i { opacity: .45; filter: blur(100px); }
+.login-pitch { position: relative; }
+.login-pitch h1 { font-weight: 300; text-shadow: 0 4px 40px rgb(0 20 40 / .45); }
+.login-pitch p { color: rgb(255 255 255 / .92); text-shadow: 0 1px 12px rgb(0 20 40 / .5); }
+.login-pitch .ov-kicker, .login-chips li { background: rgb(4 30 48 / .35); border-color: rgb(255 255 255 / .22); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.login-card { position: relative; background: linear-gradient(160deg, rgb(255 255 255 / .86), rgb(240 248 252 / .74));
+  backdrop-filter: blur(40px) saturate(1.6); -webkit-backdrop-filter: blur(40px) saturate(1.6);
+  border: 1px solid rgb(255 255 255 / .55);
+  box-shadow: 0 50px 100px -40px rgb(0 20 40 / .7), 0 0 0 1px rgb(255 255 255 / .12), inset 0 1px 0 rgb(255 255 255 / .95), inset 0 -1px 0 rgb(0 40 70 / .06); }
+.login-card::before { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(135deg, rgb(255 255 255 / .7), transparent 35%, transparent 70%, rgb(255 255 255 / .35)); mix-blend-mode: soft-light; }
+.login-card h2 { color: #0d1b26; }
+.login-card p { color: #3d4d59; }
+.login-card label { color: #24323d; }
+.login-card input { background: rgb(255 255 255 / .9); border-color: rgb(13 27 38 / .14); color: #0d1b26; }
+.login-card input::placeholder { color: #8a99a4; }
+.login-card small { color: #5a6974; }
+.login-bg::before { background: linear-gradient(90deg, rgb(2 24 40 / .5) 0%, rgb(2 24 40 / .2) 45%, transparent 70%); }
+.login-bg { background:
+    radial-gradient(40% 60% at 88% 12%, rgb(206 70 160 / .75), transparent 70%),
+    radial-gradient(50% 55% at 60% 112%, rgb(255 178 110 / .9), transparent 70%),
+    radial-gradient(60% 80% at 0% 100%, #022f47, transparent 70%),
+    radial-gradient(60% 70% at 30% -10%, #3fb4e0, transparent 70%),
+    linear-gradient(160deg, #0a73a0, #075478); }
+/* Login v3: clear glass card, the background shows through. */
+.login-card { color: #fff;
+  background: linear-gradient(150deg, rgb(255 255 255 / .22), rgb(255 255 255 / .08) 60%, rgb(255 255 255 / .14));
+  backdrop-filter: blur(26px) saturate(1.7) brightness(1.05); -webkit-backdrop-filter: blur(26px) saturate(1.7) brightness(1.05);
+  border: 1px solid rgb(255 255 255 / .38);
+  box-shadow: 0 40px 90px -30px rgb(0 20 40 / .6), inset 0 1px 0 rgb(255 255 255 / .6), inset 1px 0 0 rgb(255 255 255 / .25), inset 0 -1px 0 rgb(255 255 255 / .1); }
+.login-card::before { background: linear-gradient(135deg, rgb(255 255 255 / .35), transparent 30%, transparent 75%, rgb(255 255 255 / .15)); mix-blend-mode: normal; }
+.login-card > * { position: relative; }
+.login-card h2 { color: #fff; text-shadow: 0 2px 20px rgb(0 20 40 / .3); }
+.login-card p { color: rgb(255 255 255 / .85); }
+.login-card label { color: rgb(255 255 255 / .92); }
+.login-card small { color: rgb(255 255 255 / .7); }
+.login-card input { background: rgb(255 255 255 / .14); border: 1px solid rgb(255 255 255 / .32); color: #fff; box-shadow: inset 0 1px 2px rgb(0 20 40 / .15); }
+.login-card input::placeholder { color: rgb(255 255 255 / .6); }
+.login-card input:focus { background: rgb(255 255 255 / .22); border-color: rgb(255 255 255 / .75); box-shadow: 0 0 0 4px rgb(255 255 255 / .15); }
+.login-card input:-webkit-autofill { -webkit-text-fill-color: #fff; transition: background-color 9999s; }
+.login-card .btn-primary { background: #fff; color: #07506f; box-shadow: 0 12px 30px -12px rgb(0 20 40 / .6); }
+.login-card .btn-primary:hover { background: #f1f8fb; }
+.login-card .login-error { color: #ffd1e0; }
+/* Login v4: bigger type and a wider card. */
+.login { grid-template-columns: 1.15fr minmax(380px, 520px); }
+.login-pitch .ov-kicker { font-size: 14px; padding: 8px 18px; margin-bottom: 24px; }
+.login-pitch h1 { font-size: clamp(56px, 8.4vw, 136px); }
+.login-pitch p { max-width: 600px; font-size: clamp(18px, 1.6vw, 24px); margin-top: 28px; }
+.login-chips { gap: 12px; margin-top: 34px; }
+.login-chips li { font-size: 16px; padding: 11px 20px; }
+.login-card { padding: 52px 48px; gap: 20px; border-radius: 32px; }
+.login-card h2 { font-size: clamp(44px, 4vw, 60px); margin: 0; }
+.login-card p { font-size: 18px; margin: -2px 0 8px; }
+.login-card label { font-size: 16px; gap: 8px; }
+.login-card input { height: 60px; font-size: 17px; padding: 0 20px; border-radius: 16px; }
+.login-card .btn { height: 62px; font-size: 18px; margin-top: 10px; }
+.login-card small { font-size: 14px; }
+/* Login v5: frosted glass, heavier blur plus a fine grain, like real matte glass. */
+.login-card { overflow: hidden;
+  background: linear-gradient(150deg, rgb(255 255 255 / .26), rgb(255 255 255 / .1) 55%, rgb(255 255 255 / .18));
+  backdrop-filter: blur(48px) saturate(1.8) brightness(1.08); -webkit-backdrop-filter: blur(48px) saturate(1.8) brightness(1.08);
+  box-shadow: 0 40px 90px -30px rgb(0 20 40 / .6), inset 0 1px 0 rgb(255 255 255 / .7), inset 1px 0 0 rgb(255 255 255 / .3),
+              inset 0 0 40px rgb(255 255 255 / .12); }
+.login-card::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: .22; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.login-card input { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+/* Login v6: clearer glass, the ribs show through softly. */
+.login-card { background: linear-gradient(150deg, rgb(255 255 255 / .16), rgb(255 255 255 / .04) 55%, rgb(255 255 255 / .1));
+  backdrop-filter: blur(14px) saturate(1.6) brightness(1.04); -webkit-backdrop-filter: blur(14px) saturate(1.6) brightness(1.04); }
+.login-card::after { opacity: .12; }
+.login-card h2, .login-card p, .login-card label, .login-card small { text-shadow: 0 1px 10px rgb(0 20 40 / .35); }
+.login-card input { background: rgb(255 255 255 / .1); }

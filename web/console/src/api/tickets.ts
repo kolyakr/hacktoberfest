@@ -11,9 +11,11 @@ const mock = new URLSearchParams(window.location.search).get('mock')
 // `?mock=<case>` uses the mock API (:8001); otherwise the real one (make dev, :8000).
 export const API = mock ? 'http://localhost:8001' : (import.meta.env.VITE_API_URL ?? 'http://localhost:8000')
 const q = mock ? `?mock=${encodeURIComponent(mock)}` : ''
+// The deployed API runs behind an ngrok tunnel; without this header ngrok answers with its warning page.
+export const HEADERS = { 'ngrok-skip-browser-warning': '1' }
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API}${path}${q}`, init)
+  const res = await fetch(`${API}${path}${q}`, { ...init, headers: { ...HEADERS, ...init?.headers } })
   if (!res.ok) throw new Error(`API ${res.status}`)
   return res.json()
 }

@@ -59,6 +59,7 @@ def _ticket(rnd: random.Random, email: str, text: str, goal: str, intents: list[
         return tick[0]
 
     store.add_message(t, Message(id="m", role="customer", text=text, at=at))
+    mirror.ticket(t)  # rows first: actions and audit_log point at tickets
     events.append(t.id, "ticket.opened", at)
     c = Classification(intents=intents, true_goal=goal, chargeback_threat="bank" in text,  # type: ignore[arg-type]
                        injection_suspected=kind == "injection", sentiment=mood)  # type: ignore[arg-type]

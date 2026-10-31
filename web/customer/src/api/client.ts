@@ -16,6 +16,8 @@ const mocks = (params.get('mock') ?? '').split(',').filter(Boolean)
 const API = mocks.length ? 'http://localhost:8001' : (import.meta.env.VITE_API_URL ?? 'http://localhost:8000')
 // `?delay=3000`: wait before each request, to see the typing paws (the mock answers instantly).
 const delay = Number(params.get('delay')) || 0
+// The deployed API runs behind an ngrok tunnel; without this header ngrok answers with its warning page.
+const HEADERS = { 'ngrok-skip-browser-warning': '1' }
 export const mockCase = (n: number): string | undefined => mocks[Math.min(n, mocks.length - 1)]
 
 export async function postChat(req: ChatRequest, n = 0): Promise<AgentOutput> {
@@ -23,7 +25,7 @@ export async function postChat(req: ChatRequest, n = 0): Promise<AgentOutput> {
   if (delay) await new Promise((r) => setTimeout(r, delay))
   const res = await fetch(`${API}/api/chat${mock ? `?mock=${encodeURIComponent(mock)}` : ''}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { ...HEADERS, 'Content-Type': 'application/json' },
     body: JSON.stringify(req),
   })
   if (!res.ok) throw new Error(`API ${res.status}`)
@@ -32,7 +34,7 @@ export async function postChat(req: ChatRequest, n = 0): Promise<AgentOutput> {
 
 export async function getTicket(id: string): Promise<TicketDetail> {
   const mock = mockCase(0)
-  const res = await fetch(`${API}/api/tickets/${encodeURIComponent(id)}${mock ? `?mock=${encodeURIComponent(mock)}` : ''}`)
+  const res = await fetch(`${API}/api/tickets/${encodeURIComponent(id)}${mock ? `?mock=${encodeURIComponent(mock)}` : ''}`, { headers: HEADERS })
   if (!res.ok) throw new Error(`API ${res.status}`)
   return res.json()
 }

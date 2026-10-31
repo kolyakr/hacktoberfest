@@ -21,20 +21,31 @@ export function Login() {
 
   return (
     <main className="login">
-      <form className="login-card glass rise" onSubmit={submit}>
-        <Mark />
-        <h1>Support console</h1>
-        <p className="muted">Sign in to see tickets, approve refunds and take over chats from Yurko.</p>
+      <div className="login-bg" aria-hidden="true"><i /><i /><i /></div>
+      <section className="login-pitch rise">
+        <span className="ov-kicker">Countersign · support console</span>
+        <h1>Support that <em>keeps its word.</em></h1>
+        <p>Yurko acts, Zavuch checks every promise against billing, Olya counts what worked.</p>
+        <ul className="login-chips">
+          <li><b>0</b> false "done" sent</li>
+          <li><b>2 s</b> live updates</li>
+          <li><b>3</b> checks per action</li>
+        </ul>
+      </section>
+      <form className="login-card rise" onSubmit={submit}>
+        <h2>Welcome <em>back</em></h2>
+        <p>Sign in to see tickets, approve refunds and take over chats from Yurko.</p>
         <label>
           <span>Work email</span>
-          <input type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input type="email" autoComplete="username" placeholder="you@team.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
         <label>
           <span>Password</span>
-          <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <input type="password" autoComplete="current-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </label>
         {error && <p className="login-error" role="alert">{error}</p>}
         <button type="submit" className="btn btn-primary" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
+        <small>Accounts are made by your team lead in Supabase.</small>
       </form>
     </main>
   )
