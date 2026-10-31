@@ -44,12 +44,13 @@ def _messages(system: str, user: str) -> list[dict[str, str]]:
 
 
 def _opts(model: str) -> dict:
-    """gpt-5 / o-series take a reasoning effort: "minimal" for the fast model's routing and checks, "low"
-    for the final text (OPENAI_REASONING_EFFORT overrides both). Other models, and the non-reasoning
-    *-chat-* ones, reject the parameter, so they get nothing."""
+    """gpt-5 / o-series take a reasoning effort: "minimal" for every gpt-5 call, "low" for o-series, which has
+    no "minimal" (OPENAI_REASONING_EFFORT overrides both). At "low" the reply draft alone took 15 s and Marta
+    waited 40–85 s; at "minimal" each draft takes about 2 s and the reply still passes Zavuch.
+    Other models, and the non-reasoning *-chat-* ones, reject the parameter, so they get nothing."""
     if "chat" in model or not re.match(r"^(gpt-5|o\d)", model):
         return {}
-    default = "minimal" if model == FAST and model.startswith("gpt-5") else "low"  # o-series has no "minimal"
+    default = "minimal" if model.startswith("gpt-5") else "low"
     return {"reasoning": {"effort": os.getenv("OPENAI_REASONING_EFFORT") or default}}
 
 

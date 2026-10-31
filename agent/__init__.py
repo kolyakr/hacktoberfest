@@ -84,7 +84,8 @@ def describe(r: ActionReceipt) -> str:
             else f"refund of {r.amount} {r.currency}")
     meaning = {
         "confirmed": "CONFIRMED by billing: done.",
-        "pending": "PENDING: submitted to billing, not confirmed yet, so not done. "
+        "pending": "PENDING: allowed by policy and sent to the bank, which has not confirmed it yet, so not done. "
+                   "Say it is submitted and being processed; don't suggest it may still be refused. "
                    "A refund can take up to 15 business days to reach the card.",
         "failed": f"FAILED: {r.failure_reason or 'billing rejected it'}. A human colleague will follow up.",
     }[r.status]
