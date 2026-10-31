@@ -1,0 +1,67 @@
+/* Colour tokens (--ink, --red, --grad …) are set on :root from src/brand.ts. */
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:'Nunito Sans',system-ui,sans-serif;font-size:16px}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+.demo{font-size:11px;font-weight:800;color:var(--red);background:var(--blush);padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.04em}
+header.top{height:72px;display:flex;align-items:center;gap:16px}
+header.top .title{font-size:14px;color:var(--muted)}
+header.top nav{margin-left:auto;display:flex;gap:24px;font-size:14px}
+.hero{height:240px;background:#58a9e6 center/cover no-repeat;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:0 16px}
+.search{width:min(640px,100%);height:48px;border-radius:99px;border:0;background:#fff;display:flex;align-items:center;gap:10px;padding:0 18px;box-shadow:0 4px 18px rgba(0,0,0,.12)}
+.search input{border:0;outline:0;flex:1;font:inherit;font-size:15px;min-width:0}
+.hero .btns{display:flex;gap:22px;margin-top:54px;flex-wrap:wrap;justify-content:center}
+.ghost{height:42px;width:196px;border:0;border-radius:6px;background:transparent;color:#fff;font-size:14px;font-weight:600}.ghost:hover{background:rgba(255,255,255,.15)}
+.intro{text-align:center;padding:36px 0 8px}
+.intro h1{font-size:26px;font-weight:700;margin:0 0 18px}
+.intro p{color:var(--muted);line-height:1.6;max-width:900px;margin:0 auto 14px}
+.cats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:28px 0 8px}
+.cat{border:1px solid #bdbdbd;border-radius:6px;padding:22px 24px;text-align:center;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+.cat:hover{border-color:var(--red);box-shadow:0 6px 18px rgba(237,44,41,.12);text-decoration:none}
+.cat h3{margin:0 0 10px;font-size:17px;font-weight:600}
+.cat p{margin:0;color:var(--muted);line-height:1.5;font-size:14.5px}
+.cat.hot{border-color:var(--pink);background:#fff7f6}
+.cat.hot h3::before{content:'NEW · ';color:var(--red);font-weight:800;font-size:12px;letter-spacing:.04em}
+h2.sec{font-size:22px;font-weight:700;margin:40px 0 12px}
+.arts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 32px}
+.arts a{display:block;padding:14px 0;border-bottom:1px solid #ececec;font-size:15px;line-height:1.4}
+/* Chat-in-app band */
+.band{margin:56px 0 0;background:var(--ink);color:#fff;border-radius:16px;display:grid;grid-template-columns:minmax(0,1fr) 340px;align-items:center;overflow:hidden}
+.band .txt{padding:40px 44px}
+.band .eyebrow{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--pink)}
+.band h2{margin:6px 0 12px;font-size:36px;font-weight:900;letter-spacing:-.02em;line-height:1.08}
+.band p{margin:0 0 22px;color:#d9d9d9;line-height:1.55;max-width:520px}
+.band img{width:100%;display:block;align-self:end}
+.cta{height:52px;padding:0 30px;border:0;border-radius:8px;background:var(--grad);color:#fff;font-weight:800;font-size:16px}
+.steps{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:24px;font-size:14px;color:#fff}
+.steps span{display:flex;align-items:center;gap:8px}
+.steps b{width:26px;height:26px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-size:13px}
+footer{margin-top:56px;border-top:1px solid #ececec;padding:24px 0 40px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+/* Chat widget */
+.fab{position:fixed;right:24px;bottom:24px;height:60px;padding:0 22px 0 8px;border:0;border-radius:99px;background:var(--grad);color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(237,44,41,.35);z-index:10}
+.fab img{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#fff}
+.chat{position:fixed;right:24px;bottom:96px;width:390px;height:min(640px,calc(100vh - 120px));background:#fafafa;border-radius:18px;box-shadow:0 20px 60px rgba(22,25,30,.25);display:none;flex-direction:column;overflow:hidden;z-index:11}
+.chat.open{display:flex}
+.chat .head{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--grad);color:#fff}
+.chat .head img{width:42px;height:42px;border-radius:12px;object-fit:cover;background:#fff}
+.chat .head .n{font-weight:800}.chat .head .s{font-size:12px;opacity:.92}
+.chat .head button{margin-left:auto;min-height:36px;padding:0 10px;border:0;border-radius:8px;background:rgba(255,255,255,.2);color:#fff;font-weight:700;font-size:13px}
+.log{flex:1;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:10px;line-height:1.45;font-size:15px}
+.me{align-self:flex-end;max-width:80%;background:var(--ink);color:#fff;padding:11px 15px;border-radius:34px 34px 0 34px}
+.bot{align-self:flex-start;max-width:84%;background:#fff;border:1px solid #ececec;padding:11px 15px;border-radius:34px 34px 34px 0}
+.pill{align-self:flex-start;font-size:13px;font-weight:700;padding:6px 12px;border-radius:99px}
+.pill.wait{color:#8a6a00;background:#fdf6d8}.pill.ok{color:#2f7a16;background:#e6f7dc}
+.receipt{align-self:flex-start;width:88%;background:#fff;border:1.5px solid #5cc53a;border-radius:16px;padding:14px 16px}
+.receipt .h{font-weight:900;color:#2f7a16;margin-bottom:8px}
+.receipt dl{display:grid;grid-template-columns:1fr auto;gap:5px 12px;margin:0;font-size:14px}.receipt dd{margin:0;font-weight:800}
+.receipt .ref{font-size:12px;color:var(--muted);margin-top:8px}
+.qr{align-self:flex-start;width:84%;display:grid;gap:8px}
+.qr button{min-height:46px;border:0;border-radius:8px;font-size:15px;font-weight:800}
+.qr .p{background:var(--grad);color:#fff}.qr .s{background:#f2f2f2;color:var(--ink)}
+.paws{display:flex;gap:2px}.paws button{width:42px;height:42px;border:0;background:transparent;padding:0}
+.composer{display:flex;gap:8px;padding:10px 12px 14px;background:#fff;border-top:1px solid #ececec}
+.composer input{flex:1;min-width:0;height:46px;border:1.5px solid var(--line);border-radius:99px;padding:0 16px;font:inherit;font-size:15px}
+.composer button{width:46px;height:46px;border:0;border-radius:50%;background:var(--grad);display:grid;place-items:center}
+.next{align-self:center;min-height:42px;padding:0 18px;border:1.5px dashed var(--pink);border-radius:99px;background:#fff;color:var(--red);font-weight:800;font-size:14px}
+@media (max-width:860px){.cats,.arts{grid-template-columns:1fr}.band{grid-template-columns:1fr}.band img{max-width:300px;margin:0 auto}.chat{right:8px;left:8px;width:auto}header.top .title{display:none}}
